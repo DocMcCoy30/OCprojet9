@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
 
 import static org.apache.logging.log4j.LogManager.getLogger;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 
 public class EcritureComptableTest {

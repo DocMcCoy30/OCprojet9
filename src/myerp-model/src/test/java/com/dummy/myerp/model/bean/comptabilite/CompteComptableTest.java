@@ -7,16 +7,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.logging.log4j.LogManager.getLogger;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 public class CompteComptableTest {
 
     static Logger logger = getLogger(CompteComptableTest.class);
+
+    /* Méthodes à tester :
+    public CompteComptable(Integer pNumero, String pLibelle);
+    public static CompteComptable getByNumero(List<? extends CompteComptable> pList, Integer pNumero);
+     */
+
     private static List<CompteComptable> compteComptables = new ArrayList<>();
     CompteComptable compteComptable = null;
 
     @BeforeAll
-    public static void createAListToTest() {
+    public static void setUpCompteComptableList() {
         logger.info("Creation d'une liste de CompteComptable");
         compteComptables.add(new CompteComptable(3225, "Fournitures de bureau"));
         compteComptables.add(new CompteComptable(3451, "Prestations de services"));
@@ -26,8 +32,8 @@ public class CompteComptableTest {
     }
 
     @Test
-    @DisplayName("Test du constructeur avec tous les paramètres")
-    public void constructorTest_returnsAnInstance_withAllAttributes() {
+    @DisplayName("Test du constructeur CompteComptable avec tous les paramètres")
+    public void constructorTest_returnsAnInstanceOfCompteComptable_withAllAttributes() {
         //GIVEN
         int numero = 101;
         String libelle = "CAPITAL";
