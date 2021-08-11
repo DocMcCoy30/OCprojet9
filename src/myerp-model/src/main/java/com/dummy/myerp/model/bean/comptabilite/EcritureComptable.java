@@ -80,7 +80,7 @@ public class EcritureComptable {
      *
      * @return {@link BigDecimal}, {@link BigDecimal#ZERO} si aucun montant au débit
      */
-    // TODO à tester
+    // TODO à tester => DONE
     public BigDecimal getTotalDebit() {
         BigDecimal vRetour = BigDecimal.ZERO;
         for (LigneEcritureComptable vLigneEcritureComptable : listLigneEcriture) {
@@ -99,8 +99,11 @@ public class EcritureComptable {
     public BigDecimal getTotalCredit() {
         BigDecimal vRetour = BigDecimal.ZERO;
         for (LigneEcritureComptable vLigneEcritureComptable : listLigneEcriture) {
-            if (vLigneEcritureComptable.getDebit() != null) {
-                vRetour = vRetour.add(vLigneEcritureComptable.getDebit());
+            //CORRECTED : getCredit instead of getDebit (cf getTotalCreditTest)
+            if (vLigneEcritureComptable.getCredit() != null) {
+                vRetour = vRetour.add(vLigneEcritureComptable.getCredit());
+/*            if (vLigneEcritureComptable.getDebit() != null) {
+                vRetour = vRetour.add(vLigneEcritureComptable.getDebit());*/
             }
         }
         return vRetour;
@@ -111,7 +114,10 @@ public class EcritureComptable {
      * @return boolean
      */
     public boolean isEquilibree() {
-        boolean vRetour = this.getTotalDebit().equals(getTotalCredit());
+        //CORRECTED : comparaison de 2 BIGDECIMAL : The java.math.BigDecimal.compareTo(BigDecimal bg)
+        //CORRECTED : The method considers two equal BigDecimal objects even if they are equal in value irrespective of the scale.
+        //boolean vRetour = this.getTotalDebit().equals(getTotalCredit());
+        boolean vRetour = this.getTotalDebit().compareTo(getTotalCredit()) == 0;
         return vRetour;
     }
 

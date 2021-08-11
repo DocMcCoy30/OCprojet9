@@ -16,6 +16,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Test de 2 opérations basiques")
 class AssertDependencyTest {
 
+    /*
+    assertThat(actual).isEqualTo(expected);
+    assertThat(actual).as("assertion desc").isEqualTo(expected);
+    */
+
     private AssertDependency assertDependency;
     static Logger logger = getLogger(AssertDependencyTest.class);
 
