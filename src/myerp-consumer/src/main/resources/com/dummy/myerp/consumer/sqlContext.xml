@@ -99,8 +99,24 @@
         <property name="SQLgetSequenceEcritureComptableByYearAndJournalCode">
             <value>
                 SELECT * FROM myerp.sequence_ecriture_comptable
-                WHERE journal_code = :code
-                AND annee = :year
+                WHERE journal_code = :journal_code
+                AND annee = :annee
+            </value>
+        </property>
+        <property name="SQLupdateSequenceEcritureComptable">
+            <value>
+                UPDATE myerp.sequence_ecriture_comptable
+                SET derniere_valeur = :derniereValeur
+                WHERE journal_code = :journal_code
+                AND annee = :annee
+            </value>
+        </property>
+        <property name="SQLinsertSequenceEcritureComptable">
+            <value>
+                INSERT INTO myerp.sequence_ecriture_comptable
+                (journal_code, annee, derniere_valeur)
+                VALUE
+                (:journal_code, :annee, :derniere_valeur)
             </value>
         </property>
 

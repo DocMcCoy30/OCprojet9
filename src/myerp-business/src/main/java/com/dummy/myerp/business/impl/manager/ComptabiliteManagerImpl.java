@@ -83,24 +83,29 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
         Date date = pEcritureComptable.getDate();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(pEcritureComptable.getDate());
-        int year = calendar.get(Calendar.YEAR);
+        int annee = calendar.get(Calendar.YEAR);
         //2- SELECT sur la table sequence (à implémenter dans dao)
-        sequence = getDaoProxy().getComptabiliteDao().getSequenceEcritureComptableByYearAndJournalCode(pEcritureComptable.getJournal().getCode(), year);
+        sequence = getDaoProxy().getComptabiliteDao().getSequenceEcritureComptableByYearAndJournalCode(pEcritureComptable.getJournal().getCode(), annee);
         //3- Vérifier la présence d'un journal correspondant à l'EC pour l'année
             //  - si oui = dernière valeur =+1
         if (sequence!=null) {
             derniereValeur = sequence.getDerniereValeur() + 1;
             sequence.setDerniereValeur(derniereValeur);
+            //5- INSERT/UPDATE sur la table sequence
+            getDaoProxy().getComptabiliteDao().updateSequenceEcritureComptable(sequence);
+
             //  - si non = derniere valeur =1
         } else {
             sequence.setJournalCode(pEcritureComptable.getJournal().getCode());
+            sequence.setAnnee(annee);
             sequence.setDerniereValeur(1);
-            sequence.setAnnee(year);
+            //5- INSERT/UPDATE sur la table sequence
+            getDaoProxy().getComptabiliteDao().insertSequenceEcritureComptable(sequence);
         }
         //4- Mettre à jour la référence de l'EC
-        String reference = sequence.getJournalCode()+"-"+ year +"/"+derniereValeur;
+        String reference = sequence.getJournalCode()+"-"+ annee +"/"+derniereValeur;
         pEcritureComptable.setReference(reference);
-        //5- INSERT/UPDATE sur la table sequence
+        getDaoProxy().getComptabiliteDao().updateEcritureComptable(pEcritureComptable);
     }
 
     /**

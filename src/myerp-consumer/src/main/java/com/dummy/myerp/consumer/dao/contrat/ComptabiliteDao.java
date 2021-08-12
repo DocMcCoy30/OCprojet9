@@ -86,7 +86,7 @@ public interface ComptabiliteDao {
     void deleteEcritureComptable(Integer pId);
 
 
-    // ==================== EcritureComptable ====================
+    // ==================== SequenceEcritureComptable ====================
 
     /**
      * Renvoie la  liste des Sequence-Écriture-Comptable
@@ -103,4 +103,8 @@ public interface ComptabiliteDao {
      * @return {@link SequenceEcritureComptable}
      */
     SequenceEcritureComptable getSequenceEcritureComptableByYearAndJournalCode(String code, int year) throws NotFoundException;
+
+    void updateSequenceEcritureComptable(SequenceEcritureComptable sequence);
+
+    void insertSequenceEcritureComptable(SequenceEcritureComptable sequence);
 }
