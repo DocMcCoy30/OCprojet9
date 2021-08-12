@@ -11,8 +11,10 @@ public class SequenceEcritureComptable {
     private Integer annee;
     /** La dernière valeur utilisée */
     private Integer derniereValeur;
+    //IMPLEMENTED : code_journal attribute
+    private String journalCode;
 
-    // ==================== Constructeurs ====================
+// ==================== Constructeurs ====================
     /**
      * Constructeur
      */
@@ -31,6 +33,7 @@ public class SequenceEcritureComptable {
     }
 
 
+
     // ==================== Getters/Setters ====================
     public Integer getAnnee() {
         return annee;
@@ -43,6 +46,14 @@ public class SequenceEcritureComptable {
     }
     public void setDerniereValeur(Integer pDerniereValeur) {
         derniereValeur = pDerniereValeur;
+    }
+
+    public String getJournalCode() {
+        return journalCode;
+    }
+
+    public void setJournalCode(String journalCode) {
+        this.journalCode = journalCode;
     }
 
 

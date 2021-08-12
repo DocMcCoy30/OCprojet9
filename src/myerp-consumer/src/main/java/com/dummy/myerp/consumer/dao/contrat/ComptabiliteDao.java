@@ -5,6 +5,7 @@ import java.util.List;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
+import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 import com.dummy.myerp.technical.exception.NotFoundException;
 
 
@@ -15,6 +16,7 @@ public interface ComptabiliteDao {
 
     /**
      * Renvoie la liste des Comptes Comptables
+     *
      * @return {@link List}
      */
     List<CompteComptable> getListCompteComptable();
@@ -22,6 +24,7 @@ public interface ComptabiliteDao {
 
     /**
      * Renvoie la liste des Journaux Comptables
+     *
      * @return {@link List}
      */
     List<JournalComptable> getListJournalComptable();
@@ -31,6 +34,7 @@ public interface ComptabiliteDao {
 
     /**
      * Renvoie la liste des Écritures Comptables
+     *
      * @return {@link List}
      */
     List<EcritureComptable> getListEcritureComptable();
@@ -80,4 +84,23 @@ public interface ComptabiliteDao {
      * @param pId l'id de l'écriture
      */
     void deleteEcritureComptable(Integer pId);
+
+
+    // ==================== EcritureComptable ====================
+
+    /**
+     * Renvoie la  liste des Sequence-Écriture-Comptable
+     *
+     * @return {@link List}
+     */
+    List<SequenceEcritureComptable> getListSequenceEcritureComptable();
+
+    /**
+     * Renvoie la  Sequence-Écriture-Comptable par année et code-journal
+     *
+     * @param code : le code du journal comptable
+     * @param year : l'année
+     * @return {@link SequenceEcritureComptable}
+     */
+    SequenceEcritureComptable getSequenceEcritureComptableByYearAndJournalCode(String code, int year) throws NotFoundException;
 }

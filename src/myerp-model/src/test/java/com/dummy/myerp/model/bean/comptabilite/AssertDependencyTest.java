@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.logging.log4j.LogManager.getLogger;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Classe de test pour injection des dépendances JUnit5 et AssertJ

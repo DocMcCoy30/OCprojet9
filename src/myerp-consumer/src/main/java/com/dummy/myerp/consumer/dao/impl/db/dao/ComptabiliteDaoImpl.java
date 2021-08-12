@@ -3,21 +3,16 @@ package com.dummy.myerp.consumer.dao.impl.db.dao;
 import java.sql.Types;
 import java.util.List;
 
+import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.*;
+import com.dummy.myerp.model.bean.comptabilite.*;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import com.dummy.myerp.consumer.dao.contrat.ComptabiliteDao;
-import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.CompteComptableRM;
-import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.EcritureComptableRM;
-import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.JournalComptableRM;
-import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.LigneEcritureComptableRM;
 import com.dummy.myerp.consumer.db.AbstractDbConsumer;
 import com.dummy.myerp.consumer.db.DataSourcesEnum;
-import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
-import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
-import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
-import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.technical.exception.NotFoundException;
 
 
@@ -267,4 +262,44 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
         vSqlParams.addValue("ecriture_id", pEcritureId);
         vJdbcTemplate.update(SQLdeleteListLigneEcritureComptable, vSqlParams);
     }
+
+    //IMPLEMENTED : méthodes table sequence-ecriture-comptable
+
+    // ==================== Sequence Ecritur Comptable - GET ====================
+
+    /** SQLgetListSequenceEcritureComptable */
+    private static String SQLgetListSequenceEcritureComptable;
+    public void setSQLgetListSequenceEcritureComptable(String pSQLgetListSequenceEcritureComptable) {
+        SQLgetListSequenceEcritureComptable = pSQLgetListSequenceEcritureComptable;
+    }
+    @Override
+    public List<SequenceEcritureComptable> getListSequenceEcritureComptable() {
+        JdbcTemplate vJdbcTemplate = new JdbcTemplate(this.getDataSource(DataSourcesEnum.MYERP));
+        RowMapper<SequenceEcritureComptable> vRM = new SequenceEcritureComptableRM();
+        List<SequenceEcritureComptable> sequences = vJdbcTemplate.query(SQLgetListSequenceEcritureComptable, vRM);
+        return sequences;
+    }
+
+
+    /** SQLgetSequenceEcritureComptableByYearAndJournalCode */
+    private static String SQLgetSequenceEcritureComptableByYearAndJournalCode;
+    public void setSQLgetSequenceEcritureComptableByYearAndJournalCode(String pSQLgetSequenceEcritureComptableByYearAndJournalCode) {
+        SQLgetSequenceEcritureComptableByYearAndJournalCode = pSQLgetSequenceEcritureComptableByYearAndJournalCode;
+    }
+    @Override
+    public SequenceEcritureComptable getSequenceEcritureComptableByYearAndJournalCode(String code, int year) throws NotFoundException {
+        SequenceEcritureComptable sec;
+        NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(this.getDataSource(DataSourcesEnum.MYERP));
+        RowMapper<SequenceEcritureComptable> vRM = new SequenceEcritureComptableRM();
+        MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
+        vSqlParams.addValue("journal_code", code);
+        vSqlParams.addValue("annee", year);
+        try {
+            sec = vJdbcTemplate.queryForObject(SQLgetSequenceEcritureComptableByYearAndJournalCode, vSqlParams, vRM);
+        } catch (Exception e) {
+            throw new NotFoundException("Pas de sequence avec ces références");
+        }
+        return sec;
+    }
+
 }

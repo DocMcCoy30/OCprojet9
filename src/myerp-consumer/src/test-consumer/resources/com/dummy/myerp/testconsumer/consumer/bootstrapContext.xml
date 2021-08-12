@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+
+    <!-- ========== Configuration ========== -->
+    <!-- Log4j -->
+    <bean id="log4jInitialization" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass" value="org.apache.logging.log4j.core.config.Configurator"/>
+        <property name="targetMethod" value="initialize"/>
+        <property name="arguments">
+            <list>
+                <null/>
+                <value>classpath:conf/properties/log4j2.xml</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <!-- ========== Fichiers de configuration ========== -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:conf/properties/config.properties</value>
+                <value>classpath:conf/properties/db-test.properties</value>
+                <!--
+                <value>classpath:conf_testconsumer/dbMYERP.properties</value>
+                -->
+            </list>
+        </property>
+        <property name="ignoreUnresolvablePlaceholders" value="false"/>
+        <property name="fileEncoding" value="UTF-8"/>
+    </bean>
+
+
+    <!-- ========== Inclusion des autres fichiers de contexte Spring ========== -->
+    <import resource="classpath:/com/dummy/myerp/technical/applicationContext.xml"/>
+    <import resource="classpath:/com/dummy/myerp/model/applicationContext.xml"/>
+    <import resource="classpath:/com/dummy/myerp/consumer/applicationContext.xml"/>
+    <import resource="classpath:/com/dummy/myerp/testconsumer/consumer/testContext.xml"/>
+
+</beans>
