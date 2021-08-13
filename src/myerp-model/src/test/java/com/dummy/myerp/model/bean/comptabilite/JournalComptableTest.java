@@ -21,7 +21,7 @@ public class JournalComptableTest {
      */
 
     private static List<JournalComptable> journalComptables = new ArrayList<>();
-    private JournalComptable journalComptable = null;
+    private JournalComptable journalComptable;
 
     @BeforeAll
     public static void setUpJournalComptableList() {
