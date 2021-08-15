@@ -27,15 +27,18 @@ public class ComptabiliteDaoImplTest {
 
     @Mock
     ComptabiliteDaoImpl mockComptabiliteDao;
+
     ComptabiliteDaoImpl comptabiliteDao;
     List<CompteComptable> compteComptables;
     List<EcritureComptable> ecritureComptables;
+    List<JournalComptable> journalComptables;
 
     @BeforeEach
     public void init() {
         comptabiliteDao = new ComptabiliteDaoImplFake();
         compteComptables = comptabiliteDao.getListCompteComptableQueryResult();
         ecritureComptables = comptabiliteDao.getListeEcritureComptableQueryResult();
+        journalComptables = comptabiliteDao.getListJournalComptableQueryResult();
     }
 
     @Test
@@ -59,6 +62,22 @@ public class ComptabiliteDaoImplTest {
         assertThat(liste.get(0).getLibelle()).isEqualTo("Compte n°1");
         assertThat(liste.get(1).getNumero()).isEqualTo(2);
         assertThat(liste.get(1).getLibelle()).isEqualTo("Compte n°2");
+    }
+
+    @Test
+    @Tag("getListJournalComptable")
+    @DisplayName("Should return list of journal comptable")
+    public void getListJournalComptable() {
+        // GIVEN
+        when(mockComptabiliteDao.getListJournalComptable()).thenReturn(journalComptables);
+        // WHEN
+        List<JournalComptable> liste = mockComptabiliteDao.getListJournalComptable();
+        // THEN
+        verify(mockComptabiliteDao).getListJournalComptable();
+        assertThat(liste.get(0).getCode()).isEqualTo("AC");
+        assertThat(liste.get(0).getLibelle()).isEqualTo("Achat");
+        assertThat(liste.get(1).getCode()).isEqualTo("VE");
+        assertThat(liste.get(1).getLibelle()).isEqualTo("Vente");
     }
 
     @Test
@@ -88,13 +107,18 @@ public class ComptabiliteDaoImplTest {
     private static class ComptabiliteDaoImplFake extends ComptabiliteDaoImpl {
 
         @Override
-        protected List<EcritureComptable> getListeEcritureComptableQueryResult() {
-            return generateListeEcrituresComptables();
+        protected List<CompteComptable> getListCompteComptableQueryResult() {
+            return generateListeComptesComptables();
         }
 
         @Override
-        protected List<CompteComptable> getListCompteComptableQueryResult() {
-            return generateListeComptesComptables();
+        protected List<JournalComptable> getListJournalComptableQueryResult() {
+            return generateListJournalComptable();
+        }
+
+        @Override
+        protected List<EcritureComptable> getListeEcritureComptableQueryResult() {
+            return generateListeEcrituresComptables();
         }
 
         /**
@@ -103,21 +127,37 @@ public class ComptabiliteDaoImplTest {
          * @return List<CompteComptable> une liste de comptes comptables.
          */
         private List<CompteComptable> generateListeComptesComptables() {
+            List<CompteComptable> compteComptables = new LinkedList<>();
             CompteComptable compteComptable1 = new CompteComptable(1, "Compte n°1");
             CompteComptable compteComptable2 = new CompteComptable(2, "Compte n°2");
-            List<CompteComptable> listeCompteComptable = new LinkedList<>();
-            listeCompteComptable.add(compteComptable1);
-            listeCompteComptable.add(compteComptable2);
-            return listeCompteComptable;
+            compteComptables.add(compteComptable1);
+            compteComptables.add(compteComptable2);
+            return compteComptables;
+        }
+
+        /**
+         * STUB : Code pour créer une liste de journaux comptables comptables.
+         *
+         * @return List<JournalComptable> une liste journaux comptables comptables.
+         */
+        private List<JournalComptable> generateListJournalComptable() {
+            List<JournalComptable> journalComptables = new ArrayList<>();
+            JournalComptable journalComptable1 = new JournalComptable("AC", "Achat");
+            JournalComptable journalComptable2 = new JournalComptable("VE", "Vente");
+            JournalComptable journalComptable3 = new JournalComptable("BQ", "Banque");
+            journalComptables.add(journalComptable1);
+            journalComptables.add(journalComptable2);
+            journalComptables.add(journalComptable3);
+            return journalComptables;
         }
 
         /**
          * STUB : Code pour créer une liste d'écritures comptables.
          *
-         * @return List<CompteComptable> une liste d'écritures comptables.
+         * @return List<EcritureComptable> une liste d'écritures comptables.
          */
         private List<EcritureComptable> generateListeEcrituresComptables() {
-            List<EcritureComptable> listeEcritureComptable = new ArrayList<>();
+            List<EcritureComptable> ecritureComptables = new ArrayList<>();
             EcritureComptable vEcritureComptable = new EcritureComptable();
             vEcritureComptable.setJournal(new JournalComptable("AC", "Achat"));
             vEcritureComptable.setDate(new Date());
@@ -129,8 +169,8 @@ public class ComptabiliteDaoImplTest {
             vEcritureComptable.getListLigneEcriture().add(new LigneEcritureComptable(new CompteComptable(6, "la banque"),
                     "", null,
                     new BigDecimal(412)));
-            listeEcritureComptable.add(vEcritureComptable);
-            return listeEcritureComptable;
+            ecritureComptables.add(vEcritureComptable);
+            return ecritureComptables;
         }
     }
 }

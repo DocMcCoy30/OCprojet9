@@ -49,7 +49,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     }
 
 
-    // ==================== Méthodes ====================
+    // ==================== CompteComptable - GET ====================
 
     /**
      * Refactor getListCompteComptable() :
@@ -77,6 +77,17 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 //        return vList;
     }
 
+
+    // ==================== JournalComptable - GET ====================
+
+    /**
+     * Refactor getListCompteComptable() :
+     *
+     * @return List<CompteComptable>
+     */
+    protected List<JournalComptable> getListJournalComptableQueryResult() {
+        return getJdbcTemplate().query(SQLgetListJournalComptable, new JournalComptableRM());
+    }
     /**
      * SQLgetListJournalComptable
      */
@@ -88,9 +99,9 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 
     @Override
     public List<JournalComptable> getListJournalComptable() {
-        JdbcTemplate vJdbcTemplate = getJdbcTemplate();
-        JournalComptableRM vRM = new JournalComptableRM();
-        List<JournalComptable> vList = vJdbcTemplate.query(SQLgetListJournalComptable, vRM);
+//        JdbcTemplate vJdbcTemplate = getJdbcTemplate();
+//        JournalComptableRM vRM = new JournalComptableRM();
+        List<JournalComptable> vList = getListJournalComptableQueryResult();
         return vList;
     }
 
@@ -334,7 +345,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 
     //IMPLEMENTED : méthodes table sequence-ecriture-comptable
 
-    // ==================== Sequence Ecriture Comptable - GET ====================
+    // ==================== SequenceEcritureComptable - GET ====================
 
     /**
      * SQLgetListSequenceEcritureComptable
@@ -379,6 +390,8 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
         return sec;
     }
 
+    // ==================== SequenceEcritureComptable - UPDATE ====================
+
     /**
      * SQLupdateSequenceEcritureComptable
      */
@@ -398,6 +411,8 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
         vJdbcTemplate.update(SQLupdateSequenceEcritureComptable, vSqlParams);
     }
 
+    // ==================== SequenceEcritureComptable - INSERT ====================
+    
     /**
      * SQLinsertSequenceEcritureComptable
      */
