@@ -115,7 +115,7 @@ public class EcritureComptable {
      */
     public boolean isEquilibree() {
         //CORRECTED : comparaison de 2 BIGDECIMAL : The java.math.BigDecimal.compareTo(BigDecimal bg)
-        //CORRECTED : The method considers two equal BigDecimal objects even if they are equal in value irrespective of the scale.
+        //The method considers two equal BigDecimal objects even if they are equal in value irrespective of the scale.
         //boolean vRetour = this.getTotalDebit().equals(getTotalCredit());
         boolean vRetour = this.getTotalDebit().compareTo(getTotalCredit()) == 0;
         return vRetour;

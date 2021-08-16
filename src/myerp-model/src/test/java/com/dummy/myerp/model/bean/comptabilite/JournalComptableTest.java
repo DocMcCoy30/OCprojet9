@@ -9,15 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.logging.log4j.LogManager.getLogger;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 public class JournalComptableTest {
+
+    public static final String STRING_EXPECTED = "JournalComptable{code='AC', libelle='Achat'}";
+
 
     static Logger logger = getLogger(JournalComptableTest.class);
 
     /* Méthodes à tester :
     public JournalComptable(String pCode, String pLibelle);
     public static JournalComptable getByCode(List<? extends JournalComptable> pList, String pCode);
+    public String toString()
      */
 
     private static List<JournalComptable> journalComptables = new ArrayList<>();
@@ -25,10 +29,10 @@ public class JournalComptableTest {
 
     @BeforeAll
     public static void setUpJournalComptableList() {
-        journalComptables.add(new JournalComptable("AC","Achats"));
-        journalComptables.add(new JournalComptable("VE","Ventes"));
-        journalComptables.add(new JournalComptable("BQ","Banques"));
-        journalComptables.add(new JournalComptable("OD","Opérations Diverses"));
+        journalComptables.add(new JournalComptable("AC", "Achat"));
+        journalComptables.add(new JournalComptable("VE", "Vente"));
+        journalComptables.add(new JournalComptable("BQ", "Banque"));
+        journalComptables.add(new JournalComptable("OD", "Opérations Diverses"));
     }
 
     @Test
@@ -52,6 +56,16 @@ public class JournalComptableTest {
         JournalComptable actualJournal = JournalComptable.getByCode(journalComptables, code);
         //THEN
         assertThat(actualJournal.getCode()).isEqualTo("AC");
-        assertThat(actualJournal.getLibelle()).isEqualTo("Achats");
+        assertThat(actualJournal.getLibelle()).isEqualTo("Achat");
+    }
+
+    @Test
+    public void toStringTest() {
+        //GIVEN
+        journalComptable = new JournalComptable("AC", "Achat");
+        // WHEN
+        String resultActual = journalComptable.toString();
+        // THEN
+        assertThat(resultActual).isEqualTo(STRING_EXPECTED);
     }
 }

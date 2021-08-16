@@ -1,16 +1,20 @@
 package com.dummy.myerp.consumer.dao.impl.db.dao;
 
+import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.EcritureComptableRM;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
+import com.dummy.myerp.technical.exception.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
+import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -19,19 +23,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+
 
 @ExtendWith(MockitoExtension.class)
 public class ComptabiliteDaoImplTest {
 
-    @Mock
-    ComptabiliteDaoImpl mockComptabiliteDao;
-
+    @InjectMocks
     ComptabiliteDaoImpl comptabiliteDao;
+
     List<CompteComptable> compteComptables;
     List<EcritureComptable> ecritureComptables;
     List<JournalComptable> journalComptables;
+    EcritureComptable ecritureComptable;
 
     @BeforeEach
     public void init() {
@@ -39,6 +42,7 @@ public class ComptabiliteDaoImplTest {
         compteComptables = comptabiliteDao.getListCompteComptableQueryResult();
         ecritureComptables = comptabiliteDao.getListeEcritureComptableQueryResult();
         journalComptables = comptabiliteDao.getListJournalComptableQueryResult();
+        ecritureComptable = comptabiliteDao.getEcritureComptableQueryResult(new MapSqlParameterSource(), new EcritureComptableRM());
     }
 
     @Test
@@ -52,13 +56,10 @@ public class ComptabiliteDaoImplTest {
     @DisplayName("Should return list of accounts")
     public void getListCompteComptable() {
         // GIVEN
-        when(mockComptabiliteDao.getListCompteComptable()).thenReturn(compteComptables);
         // WHEN
-        List<CompteComptable> liste = mockComptabiliteDao.getListCompteComptable();
+        List<CompteComptable> liste = comptabiliteDao.getListCompteComptable();
         // THEN
-        verify(mockComptabiliteDao).getListCompteComptable();
         assertThat(liste.get(0).getNumero()).isEqualTo(1);
-        assertThat(liste.get(0).getNumero()).isEqualTo(compteComptables.get(0).getNumero());
         assertThat(liste.get(0).getLibelle()).isEqualTo("Compte n°1");
         assertThat(liste.get(1).getNumero()).isEqualTo(2);
         assertThat(liste.get(1).getLibelle()).isEqualTo("Compte n°2");
@@ -69,11 +70,9 @@ public class ComptabiliteDaoImplTest {
     @DisplayName("Should return list of journal comptable")
     public void getListJournalComptable() {
         // GIVEN
-        when(mockComptabiliteDao.getListJournalComptable()).thenReturn(journalComptables);
         // WHEN
-        List<JournalComptable> liste = mockComptabiliteDao.getListJournalComptable();
+        List<JournalComptable> liste = comptabiliteDao.getListJournalComptable();
         // THEN
-        verify(mockComptabiliteDao).getListJournalComptable();
         assertThat(liste.get(0).getCode()).isEqualTo("AC");
         assertThat(liste.get(0).getLibelle()).isEqualTo("Achat");
         assertThat(liste.get(1).getCode()).isEqualTo("VE");
@@ -85,26 +84,42 @@ public class ComptabiliteDaoImplTest {
     @DisplayName("Should return list of ecriture comptable")
     public void getListEcritureComptable() {
         // GIVEN
-        when(mockComptabiliteDao.getListEcritureComptable()).thenReturn(ecritureComptables);
         // WHEN
-        List<EcritureComptable> liste = mockComptabiliteDao.getListEcritureComptable();
+        List<EcritureComptable> liste = comptabiliteDao.getListEcritureComptable();
         // THEN
-        verify(mockComptabiliteDao).getListEcritureComptable();
         assertThat(liste.get(0).getReference()).isEqualTo("AC-2019/00001");
         assertThat(liste.get(0).getLibelle()).isEqualTo("Libelle");
         assertThat(liste.get(0).getJournal().getCode()).isEqualTo("AC");
         assertThat(liste.get(0).getJournal().getLibelle()).isEqualTo("Achat");
     }
 
+    @Test
+    @Tag("getEcritureComptable")
+    @DisplayName("Should find and return an Ecriture Comptable by its Id")
+    public void getEcritureComptable() throws NotFoundException {
+        // GIVEN
+        int id = 1;
+        // WHEN
+        EcritureComptable ecritureComptable = comptabiliteDao.getEcritureComptable(id);
+        // THEN
+        assertThat(ecritureComptable.getReference()).isEqualTo("AC-2019/00001");
+        assertThat(ecritureComptable.getLibelle()).isEqualTo("Libelle");
+    }
 
-    //----------------
-    //----- FAKE -----
-    //----------------
+
+
+//----------------
+//----- FAKE -----
+//----------------
 
     /**
      * Mock ComptabiliteDaoImpl
      */
     private static class ComptabiliteDaoImplFake extends ComptabiliteDaoImpl {
+        @Override
+        protected JdbcTemplate getJdbcTemplate() {
+            return new JdbcTemplate();
+        }
 
         @Override
         protected List<CompteComptable> getListCompteComptableQueryResult() {
@@ -119,6 +134,11 @@ public class ComptabiliteDaoImplTest {
         @Override
         protected List<EcritureComptable> getListeEcritureComptableQueryResult() {
             return generateListeEcrituresComptables();
+        }
+
+        @Override
+        protected EcritureComptable getEcritureComptableQueryResult(MapSqlParameterSource vParams, EcritureComptableRM vRM) {
+            return generateListeEcrituresComptables().get(0);
         }
 
         /**
@@ -159,6 +179,7 @@ public class ComptabiliteDaoImplTest {
         private List<EcritureComptable> generateListeEcrituresComptables() {
             List<EcritureComptable> ecritureComptables = new ArrayList<>();
             EcritureComptable vEcritureComptable = new EcritureComptable();
+            vEcritureComptable.setId(1);
             vEcritureComptable.setJournal(new JournalComptable("AC", "Achat"));
             vEcritureComptable.setDate(new Date());
             vEcritureComptable.setReference("AC-2019/00001");
@@ -174,3 +195,5 @@ public class ComptabiliteDaoImplTest {
         }
     }
 }
+
+

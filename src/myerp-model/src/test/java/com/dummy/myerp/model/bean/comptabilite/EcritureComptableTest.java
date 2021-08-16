@@ -10,6 +10,7 @@ import org.junit.jupiter.api.*;
 
 import static org.apache.logging.log4j.LogManager.getLogger;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class EcritureComptableTest {
@@ -20,14 +21,24 @@ public class EcritureComptableTest {
     public BigDecimal getTotalDebit();
     public BigDecimal getTotalCredit();
     public boolean isEquilibree();
+    public String toString()
      */
+
+    private  EcritureComptable ecritureComptable = null;
+
+    public static final String STRING_EXPECTED = "EcritureComptable{id=null, journal=null, reference='null', date=null, libelle='Equilibrée', totalDebit=341.00, totalCredit=341, listLigneEcriture=[\n" +
+            "LigneEcritureComptable{compteComptable=CompteComptable{numero=1, libelle='null'}, libelle='200.50', debit=200.50, credit=null}\n" +
+            "LigneEcritureComptable{compteComptable=CompteComptable{numero=1, libelle='null'}, libelle='67.50', debit=100.50, credit=33}\n" +
+            "LigneEcritureComptable{compteComptable=CompteComptable{numero=2, libelle='null'}, libelle='-301', debit=null, credit=301}\n" +
+            "LigneEcritureComptable{compteComptable=CompteComptable{numero=2, libelle='null'}, libelle='33', debit=40, credit=7}\n" +
+            "]}";
 
     //TESTS
     @Test
         public void getTotalDebitTest_returnsTheSumOfDebits_ofSeveralLigneEcritureComptable() {
         //GIVEN
         int a = 25, b=75, c=50, expectedResult = a+b+c;
-        EcritureComptable ecritureComptable = new EcritureComptable();
+        ecritureComptable = new EcritureComptable();
         LigneEcritureComptable ligne1 = this.createLigne(1, Integer.toString(a), "10");
         LigneEcritureComptable ligne2 = this.createLigne(1, Integer.toString(b), "10");
         LigneEcritureComptable ligne3 = this.createLigne(1, Integer.toString(c), "10");
@@ -44,7 +55,7 @@ public class EcritureComptableTest {
     public void getTotalCreditTest_returnsTheSumOfCredits_ofSeveralLigneEcritureComptable() {
         //GIVEN
         int a = 25, b=75, c=50, expectedResult = a+b+c;
-        EcritureComptable ecritureComptable = new EcritureComptable();
+        ecritureComptable = new EcritureComptable();
         LigneEcritureComptable ligne1 = this.createLigne(1, "10", Integer.toString(a));
         LigneEcritureComptable ligne2 = this.createLigne(1, "10", Integer.toString(b));
         LigneEcritureComptable ligne3 = this.createLigne(1, "10", Integer.toString(c));
@@ -60,40 +71,50 @@ public class EcritureComptableTest {
     @Test
     public void isEquilibree_returnsTrue_whenCreditsAndDebitsAreEquals() {
         //GIVEN
-        EcritureComptable vEcriture = new EcritureComptable();
-        vEcriture.setLibelle("Equilibrée");
-        vEcriture.getListLigneEcriture().add(this.createLigne(1, "200.50", null));
-        vEcriture.getListLigneEcriture().add(this.createLigne(1, "100.50", "33"));
-        vEcriture.getListLigneEcriture().add(this.createLigne(2, null, "301"));
-        vEcriture.getListLigneEcriture().add(this.createLigne(2, "40", "7"));
-//      // CORRECTED Assert.assertTrue(vEcriture.toString(), vEcriture.isEquilibree());
-        BigDecimal credit = vEcriture.getTotalCredit(), debit = vEcriture.getTotalCredit();
-        logger.info("isEquilibree()_TotalCredit = " + vEcriture.getTotalCredit());
-        logger.info("isEquilibree()_TotalDebit = " + vEcriture.getTotalDebit());
+        ecritureComptable = new EcritureComptable();
+        ecritureComptable.setLibelle("Equilibrée");
+        ecritureComptable.getListLigneEcriture().add(this.createLigne(1, "200.50", null));
+        ecritureComptable.getListLigneEcriture().add(this.createLigne(1, "100.50", "33"));
+        ecritureComptable.getListLigneEcriture().add(this.createLigne(2, null, "301"));
+        ecritureComptable.getListLigneEcriture().add(this.createLigne(2, "40", "7"));
+        logger.info("isEquilibree()_TotalCredit = " + ecritureComptable.getTotalCredit());
+        logger.info("isEquilibree()_TotalDebit = " + ecritureComptable.getTotalDebit());
         //WHEN
-        boolean actualResult = vEcriture.isEquilibree();
+        boolean actualResult = ecritureComptable.isEquilibree();
         //THEN
-        assertThat(vEcriture.isEquilibree()).isTrue();
+        assertThat(actualResult).isTrue();
 
     }
 
     @Test
     public void isNotEquilibree_returnsFalse_whenCreditsAndDebitsAreNotEquals() {
         //GIVEN
-        EcritureComptable vEcriture = new EcritureComptable();
-        vEcriture.getListLigneEcriture().clear();
-        vEcriture.setLibelle("Non équilibrée");
-        vEcriture.getListLigneEcriture().add(this.createLigne(1, "10", null));
-        vEcriture.getListLigneEcriture().add(this.createLigne(1, "20", "1"));
-        vEcriture.getListLigneEcriture().add(this.createLigne(2, null, "30"));
-        vEcriture.getListLigneEcriture().add(this.createLigne(2, "1", "2"));
-        BigDecimal credit = vEcriture.getTotalCredit(), debit = vEcriture.getTotalCredit();
-        logger.info("isNotEquilibree()_TotalCredit = " + vEcriture.getTotalCredit());
-        logger.info("isNotEquilibree()_TotalDebit = " + vEcriture.getTotalDebit());
+        ecritureComptable = new EcritureComptable();
+        ecritureComptable.setLibelle("Non équilibrée");
+        ecritureComptable.getListLigneEcriture().add(this.createLigne(1, "10", null));
+        ecritureComptable.getListLigneEcriture().add(this.createLigne(1, "20", "1"));
+        ecritureComptable.getListLigneEcriture().add(this.createLigne(2, null, "30"));
+        ecritureComptable.getListLigneEcriture().add(this.createLigne(2, "1", "2"));
+        logger.info("isNotEquilibree()_TotalCredit = " + ecritureComptable.getTotalCredit());
+        logger.info("isNotEquilibree()_TotalDebit = " + ecritureComptable.getTotalDebit());
         //WHEN
-        boolean actualResult = vEcriture.isEquilibree();
-//      //CORRECTED Assert.assertFalse(vEcriture.toString(), vEcriture.isEquilibree());
+        boolean actualResult = ecritureComptable.isEquilibree();
         assertThat(actualResult).isFalse();
+    }
+
+    @Test
+    public void toStringTest() {
+        // GIVEN
+        ecritureComptable = new EcritureComptable();
+        ecritureComptable.setLibelle("Equilibrée");
+        ecritureComptable.getListLigneEcriture().add(this.createLigne(1, "200.50", null));
+        ecritureComptable.getListLigneEcriture().add(this.createLigne(1, "100.50", "33"));
+        ecritureComptable.getListLigneEcriture().add(this.createLigne(2, null, "301"));
+        ecritureComptable.getListLigneEcriture().add(this.createLigne(2, "40", "7"));
+        // WHEN
+        String resultActual = ecritureComptable.toString();
+        // THEN
+        assertThat(resultActual).isEqualTo(STRING_EXPECTED);
     }
 
     // METHODE UTILITAIRE

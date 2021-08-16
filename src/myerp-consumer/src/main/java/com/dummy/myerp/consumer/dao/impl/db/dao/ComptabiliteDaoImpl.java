@@ -50,16 +50,6 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 
 
     // ==================== CompteComptable - GET ====================
-
-    /**
-     * Refactor getListCompteComptable() :
-     *
-     * @return List<CompteComptable>
-     */
-    protected List<CompteComptable> getListCompteComptableQueryResult() {
-        return getJdbcTemplate().query(SQLgetListCompteComptable, new CompteComptableRM());
-    }
-
     private static String SQLgetListCompteComptable;
 
     public void setSQLgetListCompteComptable(String pSQLgetListCompteComptable) {
@@ -77,20 +67,17 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 //        return vList;
     }
 
-
-    // ==================== JournalComptable - GET ====================
-
     /**
      * Refactor getListCompteComptable() :
      *
      * @return List<CompteComptable>
      */
-    protected List<JournalComptable> getListJournalComptableQueryResult() {
-        return getJdbcTemplate().query(SQLgetListJournalComptable, new JournalComptableRM());
+    protected List<CompteComptable> getListCompteComptableQueryResult() {
+        return getJdbcTemplate().query(SQLgetListCompteComptable, new CompteComptableRM());
     }
-    /**
-     * SQLgetListJournalComptable
-     */
+
+
+    // ==================== JournalComptable - GET ====================
     private static String SQLgetListJournalComptable;
 
     public void setSQLgetListJournalComptable(String pSQLgetListJournalComptable) {
@@ -105,17 +92,16 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
         return vList;
     }
 
-    // ==================== EcritureComptable - GET ====================
-
     /**
      * Refactor getListCompteComptable() :
      *
      * @return List<CompteComptable>
      */
-    protected List<EcritureComptable> getListeEcritureComptableQueryResult() {
-        return getJdbcTemplate().query(SQLgetEcritureComptable, new EcritureComptableRM());
+    protected List<JournalComptable> getListJournalComptableQueryResult() {
+        return getJdbcTemplate().query(SQLgetListJournalComptable, new JournalComptableRM());
     }
 
+    // ==================== List<EcritureComptable> - GET ====================
     private static String SQLgetListEcritureComptable;
 
     public void setSQLgetListEcritureComptable(String pSQLgetListEcritureComptable) {
@@ -131,6 +117,16 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
         return vList;
     }
 
+    /**
+     * Refactor getListEcritureComptable() :
+     *
+     * @return List<EcritureComptable>
+     */
+    protected List<EcritureComptable> getListeEcritureComptableQueryResult() {
+        return getJdbcTemplate().query(SQLgetListEcritureComptable, new EcritureComptableRM());
+    }
+
+    // ==================== EcritureComptable - GET BY ====================
 
     /**
      * SQLgetEcritureComptable
@@ -143,19 +139,17 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 
     @Override
     public EcritureComptable getEcritureComptable(Integer pId) throws NotFoundException {
-        NamedParameterJdbcTemplate vJdbcTemplate = getNamedParameterJdbcTemplate();
         MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
         vSqlParams.addValue("id", pId);
         EcritureComptableRM vRM = new EcritureComptableRM();
         EcritureComptable vBean;
         try {
-            vBean = vJdbcTemplate.queryForObject(SQLgetEcritureComptable, vSqlParams, vRM);
+            vBean = getEcritureComptableQueryResult(vSqlParams, vRM);
         } catch (EmptyResultDataAccessException vEx) {
             throw new NotFoundException("EcritureComptable non trouvée : id=" + pId);
         }
         return vBean;
     }
-
 
     /**
      * SQLgetEcritureComptableByRef
@@ -168,17 +162,25 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 
     @Override
     public EcritureComptable getEcritureComptableByRef(String pReference) throws NotFoundException {
-        NamedParameterJdbcTemplate vJdbcTemplate = getNamedParameterJdbcTemplate();
         MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
         vSqlParams.addValue("reference", pReference);
         EcritureComptableRM vRM = new EcritureComptableRM();
         EcritureComptable vBean;
         try {
-            vBean = vJdbcTemplate.queryForObject(SQLgetEcritureComptableByRef, vSqlParams, vRM);
+            vBean = getEcritureComptableQueryResult(vSqlParams, vRM);
         } catch (EmptyResultDataAccessException vEx) {
             throw new NotFoundException("EcritureComptable non trouvée : reference=" + pReference);
         }
         return vBean;
+    }
+
+    /**
+     * Refactor getEcritureComptableBy() :
+     *
+     * @return EcritureComptable
+     */
+    protected EcritureComptable getEcritureComptableQueryResult(MapSqlParameterSource vSqlParams, EcritureComptableRM vRM) {
+        return getNamedParameterJdbcTemplate().queryForObject(SQLgetEcritureComptable, vSqlParams, vRM);
     }
 
 
@@ -438,7 +440,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     }
 
     protected NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
-        return new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
+        return new NamedParameterJdbcTemplate(this.getDataSource(DataSourcesEnum.MYERP));
     }
 
 }
