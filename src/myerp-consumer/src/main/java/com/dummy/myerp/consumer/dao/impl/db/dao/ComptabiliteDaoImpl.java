@@ -202,13 +202,23 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 
     @Override
     public void loadListLigneEcriture(EcritureComptable pEcritureComptable) {
-        NamedParameterJdbcTemplate vJdbcTemplate = getNamedParameterJdbcTemplate();
+        logger.info("Into loadListLigneEcriture from ComptabiliteDaoImpl.class");
         MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
         vSqlParams.addValue("ecriture_id", pEcritureComptable.getId());
-        LigneEcritureComptableRM vRM = new LigneEcritureComptableRM();
-        List<LigneEcritureComptable> vList = vJdbcTemplate.query(SQLloadListLigneEcriture, vSqlParams, vRM);
+        List<LigneEcritureComptable> vList = getLigneEcritureComptablesQueryResult(vSqlParams, new LigneEcritureComptableRM());
         pEcritureComptable.getListLigneEcriture().clear();
         pEcritureComptable.getListLigneEcriture().addAll(vList);
+        logger.info("Nombre de ligne = " + pEcritureComptable.getListLigneEcriture().size());
+        logger.info("Ligne.toString = " + pEcritureComptable.getListLigneEcriture().toString());
+    }
+
+    /**
+     * Refactor loadListLigneEcriture() :
+     *
+     * @return List<LigneEcritureComptable>
+     */
+    protected List<LigneEcritureComptable> getLigneEcritureComptablesQueryResult(MapSqlParameterSource vSqlParams, LigneEcritureComptableRM vRM) {
+        return getNamedParameterJdbcTemplate().query(SQLloadListLigneEcriture, vSqlParams, vRM);
     }
 
 

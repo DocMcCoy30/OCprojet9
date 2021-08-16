@@ -1,10 +1,10 @@
 package com.dummy.myerp.consumer.dao.impl.db.dao;
 
 import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.EcritureComptableRM;
+import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.LigneEcritureComptableRM;
 import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.SequenceEcritureComptableRM;
 import com.dummy.myerp.model.bean.comptabilite.*;
 import com.dummy.myerp.technical.exception.NotFoundException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -148,6 +148,17 @@ public class ComptabiliteDaoImplTest {
         assertThat(sequenceEcritureComptable.getDerniereValeur()).isEqualTo(1);
     }
 
+    @Test
+    @Tag("loadListLigneEcriture")
+    @DisplayName("Should find and return a Liste of LigneEcritureComptable by the EcritureComptableId")
+    public void loadListLigneEcriture() {
+        //GIVEN
+        EcritureComptable vEcritureComptable = new EcritureComptable();
+        //WHEN
+        comptabiliteDao.loadListLigneEcriture(vEcritureComptable);
+        //THEN ??
+    }
+
 
 //----------------
 //----- FAKE -----
@@ -190,6 +201,12 @@ public class ComptabiliteDaoImplTest {
         @Override
         protected SequenceEcritureComptable getSequenceEcritureComptableQueryResult(SequenceEcritureComptableRM vRM, MapSqlParameterSource vParams) {
             return generateListeSequenceEcritureComptable().get(0);
+        }
+
+        @Override
+        protected List<LigneEcritureComptable> getLigneEcritureComptablesQueryResult(MapSqlParameterSource vSqlParams, LigneEcritureComptableRM vRM) {
+            List<EcritureComptable> ecritureComptables = this.generateListeEcrituresComptables();
+            return ecritureComptables.get(0).getListLigneEcriture();
         }
 
         /**
