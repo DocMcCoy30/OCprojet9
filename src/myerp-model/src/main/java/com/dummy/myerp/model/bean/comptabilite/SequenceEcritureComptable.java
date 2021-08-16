@@ -9,13 +9,12 @@ import javax.validation.constraints.Size;
 public class SequenceEcritureComptable {
 
     // ==================== Attributs ====================
+    //IMPLEMENTED : code_journal attribute
+    private String journalCode;
     /** L'année */
     private Integer annee;
     /** La dernière valeur utilisée */
     private Integer derniereValeur;
-    //IMPLEMENTED : code_journal attribute
-    private String journalCode;
-
 
 // ==================== Constructeurs ====================
     /**
@@ -35,7 +34,11 @@ public class SequenceEcritureComptable {
         derniereValeur = pDerniereValeur;
     }
 
-
+    public SequenceEcritureComptable(String journalCode, Integer annee, Integer derniereValeur) {
+        this.journalCode = journalCode;
+        this.annee = annee;
+        this.derniereValeur = derniereValeur;
+    }
 
     // ==================== Getters/Setters ====================
     public Integer getAnnee() {
@@ -62,9 +65,9 @@ public class SequenceEcritureComptable {
     @Override
     public String toString() {
         return "SequenceEcritureComptable{" +
-                "annee=" + annee +
+                "journalCode='" + journalCode + '\'' +
+                ", annee=" + annee +
                 ", derniereValeur=" + derniereValeur +
-                ", journalCode='" + journalCode + '\'' +
                 '}';
     }
 }

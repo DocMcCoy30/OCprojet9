@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SequenceEcritureComptableTest {
 
-    public static final String STRING_EXPECTED = "SequenceEcritureComptable{annee=2021, derniereValeur=1, journalCode='AC'}";
+    public static final String STRING_EXPECTED = "SequenceEcritureComptable{journalCode='AC', annee=2021, derniereValeur=1}";
 
     @Test
     public void toStringTest() {

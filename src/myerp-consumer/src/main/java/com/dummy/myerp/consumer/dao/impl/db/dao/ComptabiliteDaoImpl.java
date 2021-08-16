@@ -86,6 +86,8 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 
     @Override
     public List<JournalComptable> getListJournalComptable() {
+        logger.info("Into getListJournalComptable from ComptabiliteDaoImpl.class");
+
 //        JdbcTemplate vJdbcTemplate = getJdbcTemplate();
 //        JournalComptableRM vRM = new JournalComptableRM();
         List<JournalComptable> vList = getListJournalComptableQueryResult();
@@ -110,10 +112,12 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 
     @Override
     public List<EcritureComptable> getListEcritureComptable() {
+        logger.info("Into getListEcritureComptable from ComptabiliteDaoImpl.class");
+
 //        JdbcTemplate vJdbcTemplate = getJdbcTemplate();
 //        EcritureComptableRM vRM = new EcritureComptableRM();
 //        List<EcritureComptable> vList = vJdbcTemplate.query(SQLgetListEcritureComptable, vRM);
-        List<EcritureComptable> vList = getListeEcritureComptableQueryResult();
+        List<EcritureComptable> vList = getListEcritureComptableQueryResult();
         return vList;
     }
 
@@ -122,7 +126,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
      *
      * @return List<EcritureComptable>
      */
-    protected List<EcritureComptable> getListeEcritureComptableQueryResult() {
+    protected List<EcritureComptable> getListEcritureComptableQueryResult() {
         return getJdbcTemplate().query(SQLgetListEcritureComptable, new EcritureComptableRM());
     }
 
@@ -139,6 +143,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 
     @Override
     public EcritureComptable getEcritureComptable(Integer pId) throws NotFoundException {
+        logger.info("Into getEcritureComptable from ComptabiliteDaoImpl.class");
         MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
         vSqlParams.addValue("id", pId);
         EcritureComptableRM vRM = new EcritureComptableRM();
@@ -162,6 +167,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 
     @Override
     public EcritureComptable getEcritureComptableByRef(String pReference) throws NotFoundException {
+        logger.info("Into getEcritureComptableByRef from ComptabiliteDaoImpl.class");
         MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
         vSqlParams.addValue("reference", pReference);
         EcritureComptableRM vRM = new EcritureComptableRM();
@@ -183,6 +189,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
         return getNamedParameterJdbcTemplate().queryForObject(SQLgetEcritureComptable, vSqlParams, vRM);
     }
 
+    // ==================== LigneEcritureComptable - GET ====================
 
     /**
      * SQLloadListLigneEcriture
@@ -347,7 +354,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 
     //IMPLEMENTED : méthodes table sequence-ecriture-comptable
 
-    // ==================== SequenceEcritureComptable - GET ====================
+    // ==================== lit<SequenceEcritureComptable> - GET ====================
 
     /**
      * SQLgetListSequenceEcritureComptable
@@ -360,13 +367,24 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 
     @Override
     public List<SequenceEcritureComptable> getListSequenceEcritureComptable() {
+        logger.info("Into getListSequenceEcritureComptable from ComptabiliteDaoImpl.class");
+        List<SequenceEcritureComptable> sequences = getListSequenceEcritureComptablesQueryResult();
+        return sequences;
+    }
+
+    /**
+     * Refactor getListSequenceEcritureComptable() :
+     *
+     * @return List<SequenceEcritureComptable>
+     */
+    protected List<SequenceEcritureComptable> getListSequenceEcritureComptablesQueryResult() {
         JdbcTemplate vJdbcTemplate = getJdbcTemplate();
         RowMapper<SequenceEcritureComptable> vRM = new SequenceEcritureComptableRM();
         List<SequenceEcritureComptable> sequences = vJdbcTemplate.query(SQLgetListSequenceEcritureComptable, vRM);
         return sequences;
     }
 
-
+    // ==================== SequenceEcritureComptable - GET BY ====================
     /**
      * SQLgetSequenceEcritureComptableByYearAndJournalCode
      */
@@ -378,18 +396,26 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 
     @Override
     public SequenceEcritureComptable getSequenceEcritureComptableByYearAndJournalCode(String code, int year) throws NotFoundException {
-        SequenceEcritureComptable sec;
-        NamedParameterJdbcTemplate vJdbcTemplate = getNamedParameterJdbcTemplate();
-        RowMapper<SequenceEcritureComptable> vRM = new SequenceEcritureComptableRM();
+        logger.info("Into getSequenceEcritureComptableByYearAndJournalCode from ComptabiliteDaoImpl.class");
+        SequenceEcritureComptable sequenceEcritureComptable;
         MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
         vSqlParams.addValue("journal_code", code);
         vSqlParams.addValue("annee", year);
         try {
-            sec = vJdbcTemplate.queryForObject(SQLgetSequenceEcritureComptableByYearAndJournalCode, vSqlParams, vRM);
+            sequenceEcritureComptable = getSequenceEcritureComptableQueryResult(new SequenceEcritureComptableRM(), vSqlParams);
         } catch (Exception e) {
             throw new NotFoundException("Pas de sequence avec ces références");
         }
-        return sec;
+        return sequenceEcritureComptable;
+    }
+
+    /**
+     * Refactor getSequenceEcritureComptableByYearAndJournalCode() :
+     *
+     * @return SequenceEcritureComptable
+     */
+    protected SequenceEcritureComptable getSequenceEcritureComptableQueryResult(SequenceEcritureComptableRM vRM, MapSqlParameterSource vSqlParams) {
+        return getNamedParameterJdbcTemplate().queryForObject(SQLgetSequenceEcritureComptableByYearAndJournalCode, vSqlParams, vRM);
     }
 
     // ==================== SequenceEcritureComptable - UPDATE ====================

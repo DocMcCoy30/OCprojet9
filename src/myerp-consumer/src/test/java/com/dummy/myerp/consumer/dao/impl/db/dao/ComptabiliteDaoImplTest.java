@@ -1,11 +1,10 @@
 package com.dummy.myerp.consumer.dao.impl.db.dao;
 
 import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.EcritureComptableRM;
-import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
-import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
-import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
-import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
+import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.SequenceEcritureComptableRM;
+import com.dummy.myerp.model.bean.comptabilite.*;
 import com.dummy.myerp.technical.exception.NotFoundException;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -35,14 +34,16 @@ public class ComptabiliteDaoImplTest {
     List<EcritureComptable> ecritureComptables;
     List<JournalComptable> journalComptables;
     EcritureComptable ecritureComptable;
+    List<SequenceEcritureComptable> sequenceEcritureComptables;
 
     @BeforeEach
     public void init() {
         comptabiliteDao = new ComptabiliteDaoImplFake();
         compteComptables = comptabiliteDao.getListCompteComptableQueryResult();
-        ecritureComptables = comptabiliteDao.getListeEcritureComptableQueryResult();
+        ecritureComptables = comptabiliteDao.getListEcritureComptableQueryResult();
         journalComptables = comptabiliteDao.getListJournalComptableQueryResult();
         ecritureComptable = comptabiliteDao.getEcritureComptableQueryResult(new MapSqlParameterSource(), new EcritureComptableRM());
+        sequenceEcritureComptables = comptabiliteDao.getListSequenceEcritureComptablesQueryResult();
     }
 
     @Test
@@ -106,6 +107,46 @@ public class ComptabiliteDaoImplTest {
         assertThat(ecritureComptable.getLibelle()).isEqualTo("Libelle");
     }
 
+    @Test
+    @Tag("getEcritureComptableByRef")
+    @DisplayName("Should find and return an Ecriture Comptable by its Ref")
+    public void getEcritureComptableByRef() throws NotFoundException {
+        // GIVEN
+        String ref = "AC-2019/00001";
+        // WHEN
+        EcritureComptable ecritureComptable = comptabiliteDao.getEcritureComptableByRef(ref);
+        // THEN
+        assertThat(ecritureComptable.getReference()).isEqualTo("AC-2019/00001");
+        assertThat(ecritureComptable.getLibelle()).isEqualTo("Libelle");
+    }
+
+    @Test
+    @Tag("getListSequenceEcritureComptable")
+    @DisplayName("Should return list of sequence ecriture comptable")
+    public void getListSequenceEcritureComptable() {
+        // GIVEN
+        // WHEN
+        List<SequenceEcritureComptable> liste = comptabiliteDao.getListSequenceEcritureComptable();
+        // THEN
+        assertThat(liste.get(1).getJournalCode()).isEqualTo("VE");
+        assertThat(liste.get(1).getAnnee()).isEqualTo(2021);
+        assertThat(liste.get(1).getDerniereValeur()).isEqualTo(1);
+    }
+
+    @Test
+    @Tag("getEcritureComptableByRef")
+    @DisplayName("Should find and return an Ecriture Comptable by its Ref")
+    public void getSequenceEcritureComptableByYearAndJournalCode() throws NotFoundException {
+        // GIVEN
+        int annee = 2021;
+        String journalCode = "AC";
+        // WHEN
+        SequenceEcritureComptable sequenceEcritureComptable = comptabiliteDao.getSequenceEcritureComptableByYearAndJournalCode(journalCode, annee);
+        // THEN
+        assertThat(sequenceEcritureComptable.getJournalCode()).isEqualTo("AC");
+        assertThat(sequenceEcritureComptable.getAnnee()).isEqualTo(2021);
+        assertThat(sequenceEcritureComptable.getDerniereValeur()).isEqualTo(1);
+    }
 
 
 //----------------
@@ -128,17 +169,27 @@ public class ComptabiliteDaoImplTest {
 
         @Override
         protected List<JournalComptable> getListJournalComptableQueryResult() {
-            return generateListJournalComptable();
+            return generateListeJournalComptable();
         }
 
         @Override
-        protected List<EcritureComptable> getListeEcritureComptableQueryResult() {
+        protected List<EcritureComptable> getListEcritureComptableQueryResult() {
             return generateListeEcrituresComptables();
         }
 
         @Override
         protected EcritureComptable getEcritureComptableQueryResult(MapSqlParameterSource vParams, EcritureComptableRM vRM) {
             return generateListeEcrituresComptables().get(0);
+        }
+
+        @Override
+        protected List<SequenceEcritureComptable> getListSequenceEcritureComptablesQueryResult() {
+            return generateListeSequenceEcritureComptable();
+        }
+
+        @Override
+        protected SequenceEcritureComptable getSequenceEcritureComptableQueryResult(SequenceEcritureComptableRM vRM, MapSqlParameterSource vParams) {
+            return generateListeSequenceEcritureComptable().get(0);
         }
 
         /**
@@ -160,7 +211,7 @@ public class ComptabiliteDaoImplTest {
          *
          * @return List<JournalComptable> une liste journaux comptables comptables.
          */
-        private List<JournalComptable> generateListJournalComptable() {
+        private List<JournalComptable> generateListeJournalComptable() {
             List<JournalComptable> journalComptables = new ArrayList<>();
             JournalComptable journalComptable1 = new JournalComptable("AC", "Achat");
             JournalComptable journalComptable2 = new JournalComptable("VE", "Vente");
@@ -192,6 +243,19 @@ public class ComptabiliteDaoImplTest {
                     new BigDecimal(412)));
             ecritureComptables.add(vEcritureComptable);
             return ecritureComptables;
+        }
+
+        /**
+         * STUB : Code pour créer une liste de sequences écritures comptables.
+         *
+         * @return List<SequenceEcritureComptable> une liste d'écritures comptables.
+         */
+        private List<SequenceEcritureComptable> generateListeSequenceEcritureComptable() {
+            List<SequenceEcritureComptable> sequenceEcritureComptables = new ArrayList<>();
+            sequenceEcritureComptables.add(new SequenceEcritureComptable("AC", 2021, 1));
+            sequenceEcritureComptables.add(new SequenceEcritureComptable("VE", 2021, 1));
+            sequenceEcritureComptables.add(new SequenceEcritureComptable("BQ", 2021, 1));
+            return sequenceEcritureComptables;
         }
     }
 }
