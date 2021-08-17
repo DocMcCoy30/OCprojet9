@@ -5,6 +5,7 @@ import java.util.List;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
+import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 import com.dummy.myerp.technical.exception.FunctionalException;
 import com.dummy.myerp.technical.exception.NotFoundException;
 
@@ -51,7 +52,7 @@ public interface ComptabiliteManager {
      * <p><strong>Attention :</strong> l'écriture n'est pas enregistrée en persistance</p>
      * @param pEcritureComptable L'écriture comptable concernée
      */
-    void addReference(EcritureComptable pEcritureComptable) throws NotFoundException;
+    void addReference(EcritureComptable pEcritureComptable) throws NotFoundException, FunctionalException;
 
     /**
      * Vérifie que l'Ecriture comptable respecte les règles de gestion.
@@ -83,4 +84,24 @@ public interface ComptabiliteManager {
      * @param pId l'id de l'écriture
      */
     void deleteEcritureComptable(Integer pId);
+
+    /**
+     * Récupère une sequence d'écriture comptable avec le code-journal et l'année
+     * @param code : le journalCode
+     * @param annee : l'année
+     * @return : la séquence
+     */
+    SequenceEcritureComptable getSequenceEcritureComptableByYearAndJournalCode(String code, int annee);
+
+    /**
+     * Update une sequence d'écriture
+     * @param sequence : la séquence à mettre à jour
+     */
+    void updateSequenceEcritureComptable(SequenceEcritureComptable sequence);
+
+    /**
+     * Crée une sequence d'écriture
+     * @param sequence : la séquence à créer
+     */
+    void insertSequenceEcritureComptable(SequenceEcritureComptable sequence);
 }
