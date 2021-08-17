@@ -194,6 +194,11 @@ public class ComptabiliteDaoImplTest {
         }
 
         @Override
+        protected EcritureComptable getEcritureComptableByRefQueryResult(MapSqlParameterSource vParams, EcritureComptableRM vRM) {
+            return generateListeEcrituresComptables().get(0);
+        }
+
+        @Override
         protected List<SequenceEcritureComptable> getListSequenceEcritureComptablesQueryResult() {
             return generateListeSequenceEcritureComptable();
         }
@@ -273,6 +278,10 @@ public class ComptabiliteDaoImplTest {
             sequenceEcritureComptables.add(new SequenceEcritureComptable("VE", 2021, 1));
             sequenceEcritureComptables.add(new SequenceEcritureComptable("BQ", 2021, 1));
             return sequenceEcritureComptables;
+        }
+
+        private void insertEcritureComptableGenerator(EcritureComptable pEcritureComptable) {
+
         }
     }
 }

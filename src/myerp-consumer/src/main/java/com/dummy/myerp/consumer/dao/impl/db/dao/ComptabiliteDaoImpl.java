@@ -11,11 +11,13 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import com.dummy.myerp.consumer.dao.contrat.ComptabiliteDao;
 import com.dummy.myerp.consumer.db.AbstractDbConsumer;
 import com.dummy.myerp.consumer.db.DataSourcesEnum;
 import com.dummy.myerp.technical.exception.NotFoundException;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 
 /**
@@ -87,7 +89,6 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     @Override
     public List<JournalComptable> getListJournalComptable() {
         logger.info("Into getListJournalComptable from ComptabiliteDaoImpl.class");
-
 //        JdbcTemplate vJdbcTemplate = getJdbcTemplate();
 //        JournalComptableRM vRM = new JournalComptableRM();
         List<JournalComptable> vList = getListJournalComptableQueryResult();
@@ -113,7 +114,6 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     @Override
     public List<EcritureComptable> getListEcritureComptable() {
         logger.info("Into getListEcritureComptable from ComptabiliteDaoImpl.class");
-
 //        JdbcTemplate vJdbcTemplate = getJdbcTemplate();
 //        EcritureComptableRM vRM = new EcritureComptableRM();
 //        List<EcritureComptable> vList = vJdbcTemplate.query(SQLgetListEcritureComptable, vRM);
@@ -157,6 +157,15 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     }
 
     /**
+     * Refactor getEcritureComptable() :
+     *
+     * @return EcritureComptable
+     */
+    protected EcritureComptable getEcritureComptableQueryResult(MapSqlParameterSource vSqlParams, EcritureComptableRM vRM) {
+        return getNamedParameterJdbcTemplate().queryForObject(SQLgetEcritureComptable, vSqlParams, vRM);
+    }
+
+    /**
      * SQLgetEcritureComptableByRef
      */
     private static String SQLgetEcritureComptableByRef;
@@ -173,7 +182,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
         EcritureComptableRM vRM = new EcritureComptableRM();
         EcritureComptable vBean;
         try {
-            vBean = getEcritureComptableQueryResult(vSqlParams, vRM);
+            vBean = getEcritureComptableByRefQueryResult(vSqlParams, vRM);
         } catch (EmptyResultDataAccessException vEx) {
             throw new NotFoundException("EcritureComptable non trouvée : reference=" + pReference);
         }
@@ -181,12 +190,12 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     }
 
     /**
-     * Refactor getEcritureComptableBy() :
+     * Refactor getEcritureComptableByRef() :
      *
      * @return EcritureComptable
      */
-    protected EcritureComptable getEcritureComptableQueryResult(MapSqlParameterSource vSqlParams, EcritureComptableRM vRM) {
-        return getNamedParameterJdbcTemplate().queryForObject(SQLgetEcritureComptable, vSqlParams, vRM);
+    protected EcritureComptable getEcritureComptableByRefQueryResult(MapSqlParameterSource vSqlParams, EcritureComptableRM vRM) {
+        return getNamedParameterJdbcTemplate().queryForObject(SQLgetEcritureComptableByRef, vSqlParams, vRM);
     }
 
     // ==================== LigneEcritureComptable - GET ====================
@@ -243,7 +252,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
         vSqlParams.addValue("date", pEcritureComptable.getDate(), Types.DATE);
         vSqlParams.addValue("libelle", pEcritureComptable.getLibelle());
 
-        vJdbcTemplate.update(SQLinsertEcritureComptable, vSqlParams);
+        insertEcritureComptableQuery(vSqlParams, SQLinsertEcritureComptable);
 
         // ----- Récupération de l'id
         Integer vId = this.queryGetSequenceValuePostgreSQL(DataSourcesEnum.MYERP, "myerp.ecriture_comptable_id_seq",
@@ -254,6 +263,14 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
         this.insertListLigneEcritureComptable(pEcritureComptable);
     }
 
+    /**
+     * Refactor insertEcritureComptable() :
+     */
+    protected void insertEcritureComptableQuery(MapSqlParameterSource vSqlParams, String sqLinsertEcritureComptable) {
+        getNamedParameterJdbcTemplate().update(sqLinsertEcritureComptable, vSqlParams);
+    }
+
+    // ==================== LigneEcritureComptable - INSERT ====================
     /**
      * SQLinsertListLigneEcritureComptable
      */
@@ -341,6 +358,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
         vJdbcTemplate.update(SQLdeleteEcritureComptable, vSqlParams);
     }
 
+    // ==================== LigneEcritureComptable - DELETE ====================
     /**
      * SQLdeleteListLigneEcritureComptable
      */
@@ -450,7 +468,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     }
 
     // ==================== SequenceEcritureComptable - INSERT ====================
-    
+
     /**
      * SQLinsertSequenceEcritureComptable
      */

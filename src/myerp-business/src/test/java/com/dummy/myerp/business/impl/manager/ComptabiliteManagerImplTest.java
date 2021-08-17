@@ -55,7 +55,7 @@ public class ComptabiliteManagerImplTest {
         manager.checkEcritureComptableUnit(vEcritureComptable);
     }
 
-    //TODO : remplacer expected par asserThrow (Junit5 syntax)
+    //TODO : remplacer expected par assertThrow (Junit5 syntax)
 //    @Test/*(expected = FunctionalException.class)*/
 //    public void checkEcritureComptableUnitViolation() throws Exception {
 //        EcritureComptable vEcritureComptable;

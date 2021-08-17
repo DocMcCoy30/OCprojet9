@@ -75,6 +75,17 @@ public class EcritureComptable {
         return listLigneEcriture;
     }
 
+    //Implemented : add  constructors
+    public EcritureComptable() {
+    }
+
+    public EcritureComptable(JournalComptable journal, String reference, Date date, String libelle) {
+        this.journal = journal;
+        this.reference = reference;
+        this.date = date;
+        this.libelle = libelle;
+    }
+
     /**
      * Calcul et renvoie le total des montants au débit des lignes d'écriture
      *
