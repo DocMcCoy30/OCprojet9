@@ -1,4 +1,4 @@
-package com.dummy.myerp.consumer.dao.impl.db.dao;
+package com.dummy.myerp.testconsumer.consumer;
 
 import com.dummy.myerp.consumer.dao.contrat.ComptabiliteDao;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
@@ -6,7 +6,6 @@ import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 import com.dummy.myerp.technical.exception.NotFoundException;
-import com.dummy.myerp.testconsumer.consumer.ConsumerTestCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.DisplayName;
@@ -17,31 +16,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import static org.assertj.core.api.Assumptions.assumeThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 
+public class ComptabiliteDaoImplIntegrationTest extends ConsumerTestCase {
 
-public class ComptabiliteDaoImplTestConsumer extends ConsumerTestCase {
-
-    Logger logger = LogManager.getLogger(ComptabiliteDaoImplTestConsumer.class);
+    Logger logger = LogManager.getLogger(ComptabiliteDaoImplIntegrationTest.class);
     ComptabiliteDao comptabiliteDao = getDaoProxy().getComptabiliteDao();
-
-    /* Méthodes à tester :
-    void loadListLigneEcriture(EcritureComptable pEcritureComptable);
-    => void insertEcritureComptable(EcritureComptable pEcritureComptable);
-    void updateEcritureComptable(EcritureComptable pEcritureComptable);
-    void deleteEcritureComptable(Integer pId);
-    SequenceEcritureComptable getSequenceEcritureComptableByYearAndJournalCode(String code, int year) throws NotFoundException;
-    void updateSequenceEcritureComptable(SequenceEcritureComptable sequence);
-    void insertSequenceEcritureComptable(SequenceEcritureComptable sequence);
-     */
 
     @Test
     @Tag("getListCompteComptable")
     @DisplayName("Should return all the comptes comptables from DB")
     public void getListCompteComptable() {
+        logger.info("Logger is working");
         List<CompteComptable> compteComptables = comptabiliteDao.getListCompteComptable();
-        assumeThat(compteComptables.size()).isGreaterThanOrEqualTo(7);
+        assertThat(compteComptables.size()).isGreaterThanOrEqualTo(7);
     }
 
     @Test
@@ -49,7 +38,7 @@ public class ComptabiliteDaoImplTestConsumer extends ConsumerTestCase {
     @DisplayName("Should return all the journaux comptables from DB")
     public void getListJournalComptable() {
         List<JournalComptable> journalComptables = comptabiliteDao.getListJournalComptable();
-        assumeThat(journalComptables.size()).isGreaterThanOrEqualTo(4);
+        assertThat(journalComptables.size()).isGreaterThanOrEqualTo(4);
     }
 
     @Test
@@ -57,7 +46,7 @@ public class ComptabiliteDaoImplTestConsumer extends ConsumerTestCase {
     @DisplayName("Should return all the ecritures comptables from DB")
     public void getListEcritureComptable() {
         List<EcritureComptable> ecritureComptables = comptabiliteDao.getListEcritureComptable();
-        assumeThat(ecritureComptables.size()).isGreaterThanOrEqualTo(5);
+        assertThat(ecritureComptables.size()).isGreaterThanOrEqualTo(5);
     }
 
     @Test
@@ -65,7 +54,7 @@ public class ComptabiliteDaoImplTestConsumer extends ConsumerTestCase {
     @DisplayName("Should find & return an ecriture comptable by its Id")
     public void getEcritureComptable() throws NotFoundException {
         EcritureComptable ecritureComptable = comptabiliteDao.getEcritureComptable(-1);
-        assumeThat(ecritureComptable.getReference()).isEqualTo("AC-2016/00001");
+        assertThat(ecritureComptable.getReference()).isEqualTo("AC-2016/00001");
     }
 
     @Test
@@ -83,8 +72,8 @@ public class ComptabiliteDaoImplTestConsumer extends ConsumerTestCase {
     @DisplayName("Should find & return an ecriture comptable by its reference")
     public void getEcritureComptableByRef() throws NotFoundException {
         EcritureComptable ecritureComptable = comptabiliteDao.getEcritureComptableByRef("AC-2016/00001");
-        assumeThat(ecritureComptable).isNotNull();
-        assumeThat(ecritureComptable.getLibelle()).isEqualTo("Cartouches d’imprimante");
+        assertThat(ecritureComptable).isNotNull();
+        assertThat(ecritureComptable.getLibelle()).isEqualTo("Cartouches d’imprimante");
     }
 
     @Test
@@ -127,7 +116,7 @@ public class ComptabiliteDaoImplTestConsumer extends ConsumerTestCase {
         //WHEN
         comptabiliteDao.insertEcritureComptable(ecritureComptable);
         //THEN
-        assumeThat(ecritureComptable.getReference()).isEqualTo("AC-2021/00009");
+        assertThat(ecritureComptable.getReference()).isEqualTo("AC-2021/00009");
     }
 
     @Test
@@ -137,9 +126,9 @@ public class ComptabiliteDaoImplTestConsumer extends ConsumerTestCase {
         //WHEN
         List<SequenceEcritureComptable> sequenceEcritureComptables = comptabiliteDao.getListSequenceEcritureComptable();
         //THEN
-        assumeThat(sequenceEcritureComptables.size()).isGreaterThanOrEqualTo(4);
-        assumeThat(sequenceEcritureComptables.get(0).getJournalCode()).isEqualTo("AC");
-        assumeThat(sequenceEcritureComptables.get(2).getDerniereValeur()).isEqualTo(51);
+        assertThat(sequenceEcritureComptables.size()).isGreaterThanOrEqualTo(4);
+        assertThat(sequenceEcritureComptables.get(0).getJournalCode()).isEqualTo("AC");
+        assertThat(sequenceEcritureComptables.get(2).getDerniereValeur()).isEqualTo(51);
     }
 
     @Test
@@ -147,8 +136,18 @@ public class ComptabiliteDaoImplTestConsumer extends ConsumerTestCase {
     @DisplayName("Should find & return a SequenceEcritureComptable from DB with its journalCode + annee")
     public void getSequenceEcritureComptableByYearAndJournalCode() throws NotFoundException {
         SequenceEcritureComptable sequenceEcritureComptable = comptabiliteDao.getSequenceEcritureComptableByYearAndJournalCode("BQ", 2016);
-        assumeThat(sequenceEcritureComptable).isNotNull();
-        assumeThat(sequenceEcritureComptable.getDerniereValeur()).isEqualTo(51);
+        assertThat(sequenceEcritureComptable).isNotNull();
+        assertThat(sequenceEcritureComptable.getDerniereValeur()).isEqualTo(51);
     }
 
 }
+
+    /* Méthodes à tester :
+    void loadListLigneEcriture(EcritureComptable pEcritureComptable);
+    => void insertEcritureComptable(EcritureComptable pEcritureComptable);
+    void updateEcritureComptable(EcritureComptable pEcritureComptable);
+    void deleteEcritureComptable(Integer pId);
+    SequenceEcritureComptable getSequenceEcritureComptableByYearAndJournalCode(String code, int year) throws NotFoundException;
+    void updateSequenceEcritureComptable(SequenceEcritureComptable sequence);
+    void insertSequenceEcritureComptable(SequenceEcritureComptable sequence);
+     */

@@ -61,7 +61,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
      */
     // TODO à tester
     @Override
-    public synchronized void addReference(EcritureComptable pEcritureComptable) throws NotFoundException {
+    public synchronized void addReference(EcritureComptable pEcritureComptable) throws FunctionalException {
         // TODO à implémenter : DONE
         //IMPLEMENTED : addReferenceMethod
         try {
@@ -92,7 +92,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
             getBusinessProxy().getComptabiliteManager().insertSequenceEcritureComptable(sequence);
         }
         //4- Mettre à jour la référence de l'EC
-        String reference = sequence.getJournalCode() + "-" + annee + "/" + formatValeur(derniereValeur,5);
+        String reference = sequence.getJournalCode() + "-" + annee + "/" + formatValeur(derniereValeur, 5);
         pEcritureComptable.setReference(reference);
         getDaoProxy().getComptabiliteDao().updateEcritureComptable(pEcritureComptable);
     }
@@ -115,42 +115,55 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
      * @param pEcritureComptable -
      * @throws FunctionalException Si l'Ecriture comptable ne respecte pas les règles de gestion
      */
-    // TODO tests à compléter
-    protected void checkEcritureComptableUnit(EcritureComptable pEcritureComptable) throws FunctionalException {
-        // ===== Vérification des contraintes unitaires sur les attributs de l'écriture
-        checkEcritureConstraintViolation(pEcritureComptable);
+    // TODO tests à compléter : DONE
+    protected boolean checkEcritureComptableUnit(EcritureComptable pEcritureComptable) throws FunctionalException {
 
-        // ===== RG_Compta_2 : Pour qu'une écriture comptable soit valide, elle doit être équilibrée
-        checkIfEcritureIsEquilibreeRG2(pEcritureComptable);
+        try {
+            // ===== Vérification des contraintes unitaires sur les attributs de l'écriture
+            checkEcritureConstraintViolation(pEcritureComptable);
 
-        // ===== RG_Compta_3 : une écriture comptable doit avoir au moins 2 lignes d'écriture (1 au débit, 1 au crédit)
-        checkEcritureNumberOfLineRG3(pEcritureComptable);
+            // ===== RG_Compta_2 : Pour qu'une écriture comptable soit valide, elle doit être équilibrée
+            checkIfEcritureIsEquilibreeRG2(pEcritureComptable);
 
-        // ===== RG_Compta_5 : Le formatage de la référence
-        checkEcritureFormatAndContainRG5(pEcritureComptable);
+            // ===== RG_Compta_3 : une écriture comptable doit avoir au moins 2 lignes d'écriture (1 au débit, 1 au crédit)
+            checkEcritureNumberOfLineRG3(pEcritureComptable);
 
+            // ===== RG_Compta_5 : Le formatage de la référence
+            checkEcritureFormatAndContainRG5(pEcritureComptable);
+
+        } catch (Exception e) {
+            throw new FunctionalException("checkEcritureComptableUnit is KO");
+        }
+        return true;
     }
 
 
-    //CORRECTED
+    //Refactor
     // ==================== Refactoring checkEcritureComptableUnit for testing  ====================
-    public void checkEcritureConstraintViolation(EcritureComptable pEcritureComptable) throws FunctionalException {
+    public boolean checkEcritureConstraintViolation(EcritureComptable pEcritureComptable) throws FunctionalException {
         Set<ConstraintViolation<EcritureComptable>> vViolations = getConstraintValidator().validate(pEcritureComptable);
         if (!vViolations.isEmpty()) {
-            throw new FunctionalException("L'écriture comptable ne respecte pas les règles de gestion.",
+            logger.info("checkEcritureConstraintViolation is KO");
+            throw new FunctionalException("ConstraintViolation : L'écriture comptable ne respecte pas les règles de gestion.",
                     new ConstraintViolationException(
                             "L'écriture comptable ne respecte pas les contraintes de validation",
                             vViolations));
         }
+        logger.info("checkEcritureConstraintViolation is OK");
+        return true;
     }
 
-    public void checkIfEcritureIsEquilibreeRG2(EcritureComptable pEcritureComptable) throws FunctionalException {
+    public boolean checkIfEcritureIsEquilibreeRG2(EcritureComptable pEcritureComptable) throws FunctionalException {
         if (!pEcritureComptable.isEquilibree()) {
+            logger.info("checkIfEcritureIsEquilibreeRG2 => KO");
             throw new FunctionalException("L'écriture comptable n'est pas équilibrée.");
         }
+        logger.info("checkIfEcritureIsEquilibreeRG2 => OK");
+
+        return true;
     }
 
-    public void checkEcritureNumberOfLineRG3(EcritureComptable pEcritureComptable) throws FunctionalException {
+    public boolean checkEcritureNumberOfLineRG3(EcritureComptable pEcritureComptable) throws FunctionalException {
         int vNbrCredit = 0;
         int vNbrDebit = 0;
         for (LigneEcritureComptable vLigneEcritureComptable : pEcritureComptable.getListLigneEcriture()) {
@@ -167,27 +180,40 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
         if (pEcritureComptable.getListLigneEcriture().size() < 2
                 || vNbrCredit < 1
                 || vNbrDebit < 1) {
+            logger.info("checkEcritureNumberOfLineRG3 => KO");
             throw new FunctionalException(
                     "L'écriture comptable doit avoir au moins deux lignes : une ligne au débit et une ligne au crédit.");
         }
+        logger.info("checkEcritureNumberOfLineRG3 => OK");
+        return true;
     }
 
     // TODO ===== RG_Compta_5 : DONE : Format et contenu de la référence - // vérifier que l'année dans la référence correspond bien à la date de l'écriture, idem pour le code journal...
     // IMPLEMENTED RG_Compta_5
-    private void checkEcritureFormatAndContainRG5(EcritureComptable pEcritureComptable) throws FunctionalException {
+    public boolean checkEcritureFormatAndContainRG5(EcritureComptable pEcritureComptable) throws FunctionalException {
+        String refCodeJournal;
+        String refDate;
         String reference = pEcritureComptable.getReference();
-        String refCodeJournal = tokenizer(reference,0);
-        String refDate = tokenizer(reference,1);
-        //Vérification du code journal
-        if (!Objects.equals(refCodeJournal, pEcritureComptable.getJournal().getCode())) {
-            throw new FunctionalException("Le code journal dans la référence ne correspond pas au code de l'écriture");
+        if (reference != null) {
+            refCodeJournal = referenceTokenizer(reference, 0);
+            refDate = referenceTokenizer(reference, 1);
+            //Vérification du code journal
+            if (!Objects.equals(refCodeJournal, pEcritureComptable.getJournal().getCode())) {
+                logger.info("checkEcritureFormatAndContainRG5 => KO");
+                throw new FunctionalException("Le code journal dans la référence ne correspond pas au code de l'écriture");
+            }
+            //Verification de l'année
+            String ecDate = Integer.toString(getAnnee(pEcritureComptable));
+            if (!Objects.equals(refDate, ecDate)) {
+                logger.info("checkEcritureFormatAndContainRG5 => KO");
+                throw new FunctionalException("L'année dans la référence ne correspond pas à la date de l'écriture");
+            }
+        } else {
+            logger.info("checkEcritureFormatAndContainRG5 => KO");
+            throw new FunctionalException("Aucune référence pour cette écriture");
         }
-        //Verification de l'année
-        String ecDate = Integer.toString(getAnnee(pEcritureComptable));
-        if (!Objects.equals(refDate, ecDate)) {
-            throw new FunctionalException("L'année dans la référence ne correspond pas à la date de l'écriture");
-        }
-
+        logger.info("checkEcritureFormatAndContainRG5 => OK");
+        return true;
     }
 
 
@@ -198,7 +224,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
      * @param pEcritureComptable -
      * @throws FunctionalException Si l'Ecriture comptable ne respecte pas les règles de gestion
      */
-    protected void checkEcritureComptableContext(EcritureComptable pEcritureComptable) throws FunctionalException {
+    protected boolean checkEcritureComptableContext(EcritureComptable pEcritureComptable) throws FunctionalException {
         // ===== RG_Compta_6 : La référence d'une écriture comptable doit être unique
         if (StringUtils.isNoneEmpty(pEcritureComptable.getReference())) {
             try {
@@ -211,12 +237,15 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
                 // c'est qu'il y a déjà une autre écriture avec la même référence
                 if (pEcritureComptable.getId() == null
                         || !pEcritureComptable.getId().equals(vECRef.getId())) {
+                    logger.info("checkEcritureComptableContext => KO");
                     throw new FunctionalException("Une autre écriture comptable existe déjà avec la même référence.");
                 }
             } catch (NotFoundException vEx) {
                 // Dans ce cas, c'est bon, ça veut dire qu'on n'a aucune autre écriture avec la même référence.
             }
         }
+        logger.info("checkEcritureComptableContext => OK");
+        return true;
     }
 
     /**
@@ -315,10 +344,6 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
     // IMPLEMENTED : Méthodes Utilitaires
     //---------- Méthodes Utilitaires --------------
 
-    public String formatValeur(int valeur, int nbDeDigits) {
-        return String.format("%0" + nbDeDigits + "d", valeur);
-    }
-
     public int getAnnee(EcritureComptable pEcritureComptable) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(pEcritureComptable.getDate());
@@ -326,9 +351,25 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
         return annee;
     }
 
-    public String tokenizer(String myString, int index) {
+    public String formatValeur(int valeur, int nbDeDigits) throws FunctionalException {
+        String formatedString;
+        try {
+            formatedString = String.format("%0" + nbDeDigits + "d", valeur);
+        } catch (IllegalFormatFlagsException e) {
+            throw new FunctionalException("Le nombre de digits ne peut pas etre négatif.");
+        }
+        return formatedString;
+    }
+
+    public String referenceTokenizer(String myString, int index) throws FunctionalException {
+        String result;
         String str = myString.replace("/", "-");
         String[] tokens = str.split("-");
-        return tokens[index];
+        try {
+            result = tokens[index];
+        } catch (IndexOutOfBoundsException e) {
+            throw new FunctionalException("Index erronné.");
+        }
+        return result;
     }
 }

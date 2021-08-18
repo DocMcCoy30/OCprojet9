@@ -8,7 +8,7 @@
     <!-- ====================   Database   ==================== -->
 
     <!-- ========== DataSources ========== -->
-    <bean id="dataSourceMYERP" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+<!--    <bean id="dataSourceMYERP" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${myerp.database.myerp.driverClassName}"/>
         <property name="url" value="${myerp.database.myerp.url}"/>
         <property name="username" value="${myerp.database.myerp.username}"/>
@@ -21,5 +21,20 @@
         <property name="maxIdle" value="${myerp.database.myerp.maxIdle}"/>
         <property name="minIdle" value="${myerp.database.myerp.minIdle}"/>
         <property name="maxWaitMillis" value="${myerp.database.myerp.maxWaitMillis}"/>
+    </bean>-->
+
+    <bean id="dataSourceMYERP" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${driverClassName}"/>
+        <property name="url" value="${url}"/>
+        <property name="username" value="${username}"/>
+        <property name="password" value="${password}"/>
+        <property name="defaultAutoCommit" value="${defaultAutoCommit}"/>
+        <property name="defaultReadOnly" value="${defaultReadOnly}"/>
+        <property name="defaultTransactionIsolation" value="${defaultTransactionIsolation}"/>
+        <property name="initialSize" value="${initialSize}"/>
+        <property name="maxTotal" value="${maxTotal}"/>
+        <property name="maxIdle" value="${maxIdle}"/>
+        <property name="minIdle" value="${minIdle}"/>
+        <property name="maxWaitMillis" value="${maxWaitMillis}"/>
     </bean>
 </beans>

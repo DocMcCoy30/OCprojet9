@@ -12,7 +12,7 @@
         <property name="arguments">
             <list>
                 <null/>
-                <value>classpath:conf/properties/log4j2.xml</value>
+                <value>classpath:conf/properties/log4j2.properties</value>
             </list>
         </property>
     </bean>
@@ -23,7 +23,10 @@
         <property name="locations">
             <list>
                 <value>classpath:conf/properties/config.properties</value>
-                <value>classpath:conf/properties/dbMYERP.properties</value>
+                <value>classpath:conf/properties/db-test.properties</value>
+                <!--
+                <value>classpath:conf_testconsumer/dbMYERP.properties</value>
+                -->
             </list>
         </property>
         <property name="ignoreUnresolvablePlaceholders" value="false"/>

@@ -12,7 +12,7 @@
         <property name="arguments">
             <list>
                 <null/>
-                <value>classpath:conf/properties/log4j2.xml</value>
+                <value>classpath:conf/properties/log4j2.properties</value>
             </list>
         </property>
     </bean>

@@ -217,8 +217,8 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
         List<LigneEcritureComptable> vList = getLigneEcritureComptablesQueryResult(vSqlParams, new LigneEcritureComptableRM());
         pEcritureComptable.getListLigneEcriture().clear();
         pEcritureComptable.getListLigneEcriture().addAll(vList);
-        logger.info("Nombre de ligne = " + pEcritureComptable.getListLigneEcriture().size());
-        logger.info("Ligne.toString = " + pEcritureComptable.getListLigneEcriture().toString());
+//        logger.info("Nombre de ligne = " + pEcritureComptable.getListLigneEcriture().size());
+//        logger.info("Ligne.toString = " + pEcritureComptable.getListLigneEcriture().toString());
     }
 
     /**
