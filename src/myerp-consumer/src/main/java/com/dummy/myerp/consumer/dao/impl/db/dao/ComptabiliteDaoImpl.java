@@ -26,7 +26,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 public class ComptabiliteDaoImpl extends AbstractDbConsumer implements ComptabiliteDao {
 
 
-    private Logger logger = LogManager.getLogger(ComptabiliteDaoImpl.class);
+    private final Logger logger = LogManager.getLogger(ComptabiliteDaoImpl.class);
 
     // ==================== Constructeurs ====================
     /**
@@ -423,16 +423,16 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     }
 
     @Override
-    public SequenceEcritureComptable getSequenceEcritureComptableByYearAndJournalCode(String code, int year) throws NotFoundException {
+    public SequenceEcritureComptable getSequenceEcritureComptableByYearAndJournalCode(String code, int year) {
         logger.info("Into getSequenceEcritureComptableByYearAndJournalCode from ComptabiliteDaoImpl.class");
         SequenceEcritureComptable sequenceEcritureComptable;
         MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
         vSqlParams.addValue("journal_code", code);
         vSqlParams.addValue("annee", year);
         try {
-            sequenceEcritureComptable = getSequenceEcritureComptableQueryResult(new SequenceEcritureComptableRM(), vSqlParams);
-        } catch (Exception e) {
-            throw new NotFoundException("Pas de sequence avec ces références");
+            sequenceEcritureComptable = getSequenceEcritureComptableQueryResult(vSqlParams, new SequenceEcritureComptableRM());
+        } catch (EmptyResultDataAccessException e) {
+            sequenceEcritureComptable = new SequenceEcritureComptable();
         }
         return sequenceEcritureComptable;
     }
@@ -442,7 +442,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
      *
      * @return SequenceEcritureComptable
      */
-    protected SequenceEcritureComptable getSequenceEcritureComptableQueryResult(SequenceEcritureComptableRM vRM, MapSqlParameterSource vSqlParams) {
+    protected SequenceEcritureComptable getSequenceEcritureComptableQueryResult(MapSqlParameterSource vSqlParams, SequenceEcritureComptableRM vRM) {
         return getNamedParameterJdbcTemplate().queryForObject(SQLgetSequenceEcritureComptableByYearAndJournalCode, vSqlParams, vRM);
     }
 
@@ -485,7 +485,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
         vSqlParams.addValue("derniere_valeur", sequence.getDerniereValeur());
         vSqlParams.addValue("journal_code", sequence.getJournalCode());
         vSqlParams.addValue("annee", sequence.getAnnee());
-        vJdbcTemplate.update(SQLupdateSequenceEcritureComptable, vSqlParams);
+        vJdbcTemplate.update(SQLinsertSequenceEcritureComptable, vSqlParams);
     }
 
     //***** REFACTOR *****

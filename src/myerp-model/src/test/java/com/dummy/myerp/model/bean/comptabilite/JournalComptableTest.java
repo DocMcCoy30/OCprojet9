@@ -24,8 +24,7 @@ public class JournalComptableTest {
     public String toString()
      */
 
-    private static List<JournalComptable> journalComptables = new ArrayList<>();
-    private JournalComptable journalComptable;
+    private static final List<JournalComptable> journalComptables = new ArrayList<>();
 
     @BeforeAll
     public static void setUpJournalComptableList() {
@@ -62,7 +61,7 @@ public class JournalComptableTest {
     @Test
     public void toStringTest() {
         //GIVEN
-        journalComptable = new JournalComptable("AC", "Achat");
+        JournalComptable journalComptable = new JournalComptable("AC", "Achat");
         // WHEN
         String resultActual = journalComptable.toString();
         // THEN

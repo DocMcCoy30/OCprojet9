@@ -1,16 +1,15 @@
 package com.dummy.myerp.model.bean.comptabilite;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 import static org.apache.logging.log4j.LogManager.getLogger;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class EcritureComptableTest {
@@ -24,7 +23,7 @@ public class EcritureComptableTest {
     public String toString()
      */
 
-    private  EcritureComptable ecritureComptable = null;
+    private EcritureComptable ecritureComptable = null;
 
     public static final String STRING_EXPECTED = "EcritureComptable{id=null, journal=null, reference='null', date=null, libelle='Equilibrée', totalDebit=341.00, totalCredit=341, listLigneEcriture=[\n" +
             "LigneEcritureComptable{compteComptable=CompteComptable{numero=1, libelle='null'}, libelle='200.50', debit=200.50, credit=null}\n" +
@@ -33,11 +32,23 @@ public class EcritureComptableTest {
             "LigneEcritureComptable{compteComptable=CompteComptable{numero=2, libelle='null'}, libelle='33', debit=40, credit=7}\n" +
             "]}";
 
-    //TESTS
     @Test
-        public void getTotalDebitTest_returnsTheSumOfDebits_ofSeveralLigneEcritureComptable() {
+    @DisplayName("Should return an instance with all attributes")
+    public void constructorTest_withAllAttributes() {
+        JournalComptable journal = new JournalComptable("AC", "Achat");
+        String reference = "Référence";
+        Date date = new Date();
+        String libelle = "Libellé";
+        EcritureComptable ecUnderTest = new EcritureComptable(journal, reference, date,libelle);
+        assertThat(ecUnderTest.getJournal().getCode()).isEqualTo("AC");
+        assertThat(ecUnderTest.getReference()).isEqualTo("Référence");
+    }
+
+
+    @Test
+    public void getTotalDebitTest_returnsTheSumOfDebits_ofSeveralLigneEcritureComptable() {
         //GIVEN
-        int a = 25, b=75, c=50, expectedResult = a+b+c;
+        int a = 25, b = 75, c = 50, expectedResult = a + b + c;
         ecritureComptable = new EcritureComptable();
         LigneEcritureComptable ligne1 = this.createLigne(1, Integer.toString(a), "10");
         LigneEcritureComptable ligne2 = this.createLigne(1, Integer.toString(b), "10");
@@ -54,7 +65,7 @@ public class EcritureComptableTest {
     @Test
     public void getTotalCreditTest_returnsTheSumOfCredits_ofSeveralLigneEcritureComptable() {
         //GIVEN
-        int a = 25, b=75, c=50, expectedResult = a+b+c;
+        int a = 25, b = 75, c = 50, expectedResult = a + b + c;
         ecritureComptable = new EcritureComptable();
         LigneEcritureComptable ligne1 = this.createLigne(1, "10", Integer.toString(a));
         LigneEcritureComptable ligne2 = this.createLigne(1, "10", Integer.toString(b));

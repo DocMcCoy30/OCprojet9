@@ -18,7 +18,7 @@ public class CompteComptableTest {
     public static CompteComptable getByNumero(List<? extends CompteComptable> pList, Integer pNumero);
      */
 
-    private static List<CompteComptable> compteComptables = new ArrayList<>();
+    private static final List<CompteComptable> compteComptables = new ArrayList<>();
     CompteComptable compteComptable = null;
 
     @BeforeAll
@@ -33,7 +33,7 @@ public class CompteComptableTest {
 
     @Test
     @DisplayName("Test du constructeur CompteComptable avec tous les paramètres")
-    public void constructorTest_returnsAnInstanceOfCompteComptable_withAllAttributes() {
+    public void constructorTest_withAllAttributes() {
         //GIVEN
         int numero = 101;
         String libelle = "CAPITAL";

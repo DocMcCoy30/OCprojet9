@@ -26,8 +26,6 @@ import static org.junit.Assert.assertThrows;
 @ExtendWith(MockitoExtension.class)
 public class ComptabiliteManagerImplTest {
 
-    private Logger logger = LogManager.getLogger(ComptabiliteManagerImplTest.class);
-
     @InjectMocks
     private ComptabiliteManagerImpl comptabiliteManager;
 
@@ -66,13 +64,13 @@ public class ComptabiliteManagerImplTest {
 
     // --------------- Tests Méthodes Utilitaires --------------
 
-    @Tag("getAnnee")
+    @Tag("formatDateToYear")
     @DisplayName("Should return the formated (yyyy) annee  of an EcritureComptable")
     @Test
-    public void getAnneTest_returnTheAnnee_ofEcritureComptable() {
+    public void formatDateToYear_returnTheAnnee_ofEcritureComptable() {
         //GIVEN
         //WHEN
-        int actualAnnee = comptabiliteManager.getAnnee(ecritureComptableOK);
+        int actualAnnee = comptabiliteManager.formatDateToYear(ecritureComptableOK);
         //THEN
         assertThat(actualAnnee).isEqualTo(2021);
     }

@@ -102,7 +102,7 @@ public interface ComptabiliteDao {
      * @param year : l'année
      * @return {@link SequenceEcritureComptable}
      */
-    SequenceEcritureComptable getSequenceEcritureComptableByYearAndJournalCode(String code, int year) throws NotFoundException;
+    SequenceEcritureComptable getSequenceEcritureComptableByYearAndJournalCode(String code, int year);
 
     void updateSequenceEcritureComptable(SequenceEcritureComptable sequence);
 

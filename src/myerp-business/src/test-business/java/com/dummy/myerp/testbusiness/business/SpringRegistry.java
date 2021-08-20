@@ -26,7 +26,7 @@ public final class SpringRegistry {
         = "classpath:/com/dummy/myerp/testbusiness/business/bootstrapContext.xml";
 
     /** Le context spring de l'application */
-    private ApplicationContext contextAppli;
+    private final ApplicationContext contextAppli;
 
 
     // ==================== ID des Beans Spring ====================
