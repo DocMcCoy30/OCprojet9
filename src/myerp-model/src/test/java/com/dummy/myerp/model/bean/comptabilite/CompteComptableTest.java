@@ -11,8 +11,6 @@ import static org.assertj.core.api.Assertions.*;
 
 public class CompteComptableTest {
 
-    static Logger logger = getLogger(CompteComptableTest.class);
-
     /* Méthodes à tester :
     public CompteComptable(Integer pNumero, String pLibelle);
     public static CompteComptable getByNumero(List<? extends CompteComptable> pList, Integer pNumero);
@@ -23,7 +21,6 @@ public class CompteComptableTest {
 
     @BeforeAll
     public static void setUpCompteComptableList() {
-        logger.info("Creation d'une liste de CompteComptable");
         compteComptables.add(new CompteComptable(3225, "Fournitures de bureau"));
         compteComptables.add(new CompteComptable(3451, "Prestations de services"));
         compteComptables.add(new CompteComptable(4111, "Clients - Ventes de biens ou de prestations de services"));

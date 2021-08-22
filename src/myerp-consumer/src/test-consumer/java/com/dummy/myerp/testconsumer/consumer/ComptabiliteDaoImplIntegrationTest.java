@@ -88,38 +88,6 @@ public class ComptabiliteDaoImplIntegrationTest extends ConsumerTestCase {
     }
 
     @Test
-    @Tag("insertEcritureComptable")
-    @DisplayName("Should insert the ecriture comptable AND the list of LigneEcritureComptable in DB")
-    public void insertEcritureComptable() {
-        //GIVEN
-        //Date de l'écriture
-        Date date = new Date();
-        //Annee de la référence
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        int annee = calendar.get(Calendar.YEAR);
-        //Journal comptable
-        JournalComptable journalComptable = comptabiliteDao.getListJournalComptable().get(0);
-        //Libellé
-        String libelle = "libellé insertLigneComptableTest";
-        //Référence
-        String reference = journalComptable.getCode() + "-" + annee + "/00009";
-        //Set EcritureCompable
-        EcritureComptable ecritureComptable = new EcritureComptable(journalComptable, reference, date, libelle);
-        //Set LigneEcriture
-//        ecritureComptable.getListLigneEcriture().add(new LigneEcritureComptable(new CompteComptable(2, "fourniture"),
-//                "fournisseur", new BigDecimal(412),
-//                null));
-//        ecritureComptable.getListLigneEcriture().add(new LigneEcritureComptable(new CompteComptable(6, "la banque"),
-//                "", null,
-//                new BigDecimal(412)));
-        //WHEN
-        comptabiliteDao.insertEcritureComptable(ecritureComptable);
-        //THEN
-        assertThat(ecritureComptable.getReference()).isEqualTo("AC-2021/00009");
-    }
-
-    @Test
     @Tag("getListSequenceEcritureComptable")
     @DisplayName("Should return a list of all the SequenceEcritureComptable from DB")
     public void getListSequenceEcritureComptable() {
@@ -134,20 +102,57 @@ public class ComptabiliteDaoImplIntegrationTest extends ConsumerTestCase {
     @Test
     @Tag("getSequenceEcritureComptableByYearAndJournalCode")
     @DisplayName("Should find & return a SequenceEcritureComptable from DB with its journalCode + annee")
-    public void getSequenceEcritureComptableByYearAndJournalCode() throws NotFoundException {
+    public void getSequenceEcritureComptableByYearAndJournalCode() {
         SequenceEcritureComptable sequenceEcritureComptable = comptabiliteDao.getSequenceEcritureComptableByYearAndJournalCode("BQ", 2016);
         assertThat(sequenceEcritureComptable).isNotNull();
         assertThat(sequenceEcritureComptable.getDerniereValeur()).isEqualTo(51);
     }
 
+
+
+
+//    //--------------Méthode utilitaires-----------
+//    private EcritureComptable generateEcritureComptable() {
+//        //Date de l'écriture
+//        Date date = new Date();
+//        //Annee de la référence
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.setTime(date);
+//        int annee = calendar.get(Calendar.YEAR);
+//        //Journal comptable
+//        JournalComptable journalComptable = comptabiliteDao.getListJournalComptable().get(0);
+//        //Libellé
+//        String libelle = "libellé insertLigneComptableTest";
+//        //Référence
+//        String reference = journalComptable.getCode() + "-" + annee + "/00009";
+//        //Set EcritureCompable
+//        return new EcritureComptable(journalComptable, reference, date, libelle);
+//    }
+
+    //    @Test
+//    @Tag("insertEcritureComptable")
+//    @DisplayName("Should insert the ecriture comptable")
+//    public void insertEcritureComptable() {
+//        //GIVEN
+//        EcritureComptable ecritureComptable = generateEcritureComptable();
+//        //WHEN
+//        comptabiliteDao.insertEcritureComptable(ecritureComptable);
+//        //THEN
+//        assertThat(ecritureComptable.getReference()).isEqualTo("AC-2021/00009");
+//    }
+//
+//    @Test
+//    @Tag("insertEcritureComptable")
+//    @DisplayName("Should insert the ecriture comptable AND the list of LigneEcritureComptable in DB")
+//    public void updateEcritureComptable() {
+//        List<EcritureComptable> ecritureComptables = comptabiliteDao.getListEcritureComptable();
+//        logger.info(ecritureComptables.size());
+//        comptabiliteDao.insertEcritureComptable(generateEcritureComptable());
+//        logger.info(ecritureComptables.size());
+//        EcritureComptable ecritureUpdated = generateEcritureComptable();
+//        ecritureUpdated.setLibelle("UpdateEcriture");
+//        comptabiliteDao.updateEcritureComptable(ecritureUpdated);
+//        logger.info(ecritureComptables.size());
+//    }
 }
 
-    /* Méthodes à tester :
-    void loadListLigneEcriture(EcritureComptable pEcritureComptable);
-    => void insertEcritureComptable(EcritureComptable pEcritureComptable);
-    void updateEcritureComptable(EcritureComptable pEcritureComptable);
-    void deleteEcritureComptable(Integer pId);
-    SequenceEcritureComptable getSequenceEcritureComptableByYearAndJournalCode(String code, int year) throws NotFoundException;
-    void updateSequenceEcritureComptable(SequenceEcritureComptable sequence);
-    void insertSequenceEcritureComptable(SequenceEcritureComptable sequence);
-     */

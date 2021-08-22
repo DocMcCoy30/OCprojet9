@@ -4,7 +4,6 @@ import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.EcritureCompt
 import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.SequenceEcritureComptableRM;
 import com.dummy.myerp.model.bean.comptabilite.*;
 import com.dummy.myerp.technical.exception.NotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -34,17 +33,14 @@ public class ComptabiliteDaoImplTest {
     @Spy
     ComptabiliteDaoImpl comptabiliteDao;
 
-    List<CompteComptable> compteComptables;
-    List<EcritureComptable> ecritureComptables;
-    List<JournalComptable> journalComptables;
-    EcritureComptable ecritureComptable;
-    List<SequenceEcritureComptable> sequenceEcritureComptables;
 
     @Test
     public void should_be_sure_comptabiliteDao_object_exists() {
         // Given // When // Then
         assertThat(comptabiliteDao).isNotNull();
     }
+
+    // ------------- GET Test Methodes --------------
 
     @Test
     @Tag("getListCompteComptable")
@@ -210,19 +206,28 @@ public class ComptabiliteDaoImplTest {
         // THEN
         assertThrows(NotFoundException.class,
                 () -> comptabiliteDao.getEcritureComptableByRef(ref),
-                "\"EcritureComptable non trouvée : reference=AC-2019/00001");
+                "EcritureComptable non trouvée : reference=AC-2019/00001");
     }
 
     @Test
-    @Tag("loadListLigneEcriture")
-    @DisplayName("Should find and return a Liste of LigneEcritureComptable by the EcritureComptableId")
-    public void loadListLigneEcriture() {
-        //GIVEN
-        EcritureComptable vEcritureComptable = new EcritureComptable();
-        //WHEN
-        comptabiliteDao.loadListLigneEcriture(vEcritureComptable);
-        //THEN ??
+    @Tag("deleteEcritureComptable")
+    @DisplayName("Should call the deleteEcritureComptable method")
+    public void deleteEcritureComptable() {
+        doNothing().when(comptabiliteDao).deleteEcritureComptable(anyInt());
+        comptabiliteDao.deleteEcritureComptable(1);
+        verify(comptabiliteDao, times(1)).deleteEcritureComptable(anyInt());
     }
+
+    @Test
+    @Tag("deleteListLigneEcritureComptable")
+    @DisplayName("Should call the deleteEcritureComptable method")
+    public void deleteSequenceEcritureComptable() {
+        doNothing().when(comptabiliteDao).deleteListLigneEcritureComptable(anyInt());
+        comptabiliteDao.deleteListLigneEcritureComptable(1);
+        verify(comptabiliteDao, times(1)).deleteListLigneEcritureComptable(anyInt());
+    }
+
+
 
 //--------------  STUBS  --------------------
 

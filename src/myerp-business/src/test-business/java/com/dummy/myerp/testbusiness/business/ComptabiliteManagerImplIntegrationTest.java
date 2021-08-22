@@ -4,12 +4,7 @@ import com.dummy.myerp.business.contrat.manager.ComptabiliteManager;
 import com.dummy.myerp.model.bean.comptabilite.*;
 import com.dummy.myerp.technical.exception.FunctionalException;
 import com.dummy.myerp.technical.exception.NotFoundException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -18,8 +13,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ComptabiliteManagerImplIntegrationTest extends BusinessTestCase {
-
-    private final Logger logger = LogManager.getLogger(ComptabiliteManagerImplIntegrationTest.class);
 
     private ComptabiliteManager comptabiliteManager;
     private EcritureComptable ecritureComptable;
@@ -30,16 +23,16 @@ public class ComptabiliteManagerImplIntegrationTest extends BusinessTestCase {
         ecritureComptable = new EcritureComptable();
         ecritureComptable.setId(1);
         ecritureComptable.setDate(new Date());
-        ecritureComptable.setLibelle("Insert_referenceEcritureSequence_IT");
+        ecritureComptable.setLibelle("Insert_Ecriture_IT");
         ecritureComptable.setJournal(new JournalComptable("AC", "Achat"));
         List<LigneEcritureComptable> listLigneEcritureComptable = ecritureComptable.getListLigneEcriture();
         listLigneEcritureComptable.add(
                 new LigneEcritureComptable(
-                        new CompteComptable(401, "Débit"), "Test d'intégration", new BigDecimal(123), null)
+                        new CompteComptable(401, "Débit"), "Test_Insert", new BigDecimal(123), null)
         );
         listLigneEcritureComptable.add(
                 new LigneEcritureComptable(
-                        new CompteComptable(512, "Crédit"), "Test d'intégration", null, new BigDecimal(123))
+                        new CompteComptable(512, "Crédit"), "Test_Insert", null, new BigDecimal(123))
         );
     }
 
@@ -67,33 +60,63 @@ public class ComptabiliteManagerImplIntegrationTest extends BusinessTestCase {
         assertThat(ecritureComptables.size()).isGreaterThanOrEqualTo(5);
     }
 
-    @Tag("addReference")
-    @DisplayName("Should add the reference and insert the EcritureComptable in the DB")
-    @Test
-    public void insertUpdateDelete_referenceEcritureSequence() throws NotFoundException, FunctionalException {
-        comptabiliteManager.addReference(ecritureComptable);
-        comptabiliteManager.insertEcritureComptable(ecritureComptable);
 
-        List<EcritureComptable> ecritureComptable1 = comptabiliteManager.getListEcritureComptable();
-        EcritureComptable ecritureSaved = ecritureComptable1.get(ecritureComptable1.size()-1);
-        assertThat(ecritureSaved.getReference()).isEqualTo("AC-2021/00001");
-        assertThat(ecritureSaved.getLibelle()).isEqualTo("Insert_referenceEcritureSequence_IT");
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    class ComptabiliteManagerImplSequenceInOrderIntegrationTest extends BusinessTestCase {
 
-        ecritureSaved.setLibelle("Update_referenceEcritureSequence_IT");
-        comptabiliteManager.updateEcritureComptable(ecritureSaved);
-        EcritureComptable ecritureUpdated = ecritureComptable1.get(ecritureComptable1.size()-1);
-        assertThat(ecritureUpdated.getReference()).isEqualTo("AC-2021/00001");
-        assertThat(ecritureUpdated.getLibelle()).isEqualTo("Update_referenceEcritureSequence_IT");
+        @Order(1)
+        @Tag("insert_Ecriture_And_Sequence")
+        @DisplayName("Should insert an EcritureComptable and a SequenceEcritureComptable")
+        @Test
+        public void insert_Ecriture_And_Sequence() throws NotFoundException, FunctionalException {
+            comptabiliteManager.addReference(ecritureComptable);
+            comptabiliteManager.insertEcritureComptable(ecritureComptable);
+            List<EcritureComptable> ecritureComptables = comptabiliteManager.getListEcritureComptable();
+            EcritureComptable ecritureSaved = ecritureComptables.get(ecritureComptables.size() - 1);
 
-        comptabiliteManager.deleteEcritureComptable(ecritureSaved.getId());
-        List<EcritureComptable> ecritureComptables2 = comptabiliteManager.getListEcritureComptable();
-        EcritureComptable lastEcriture = ecritureComptables2.get(ecritureComptables2.size()-1);
-        assertThat(ecritureComptables2.size()).isEqualTo(ecritureComptable1.size()-1);
-        assertThat(lastEcriture.getId()).isNotEqualTo(ecritureSaved.getId());
+            SequenceEcritureComptable sequenceUpdated = comptabiliteManager
+                    .getSequenceEcritureComptableByYearAndJournalCode("AC", 2021);
+            assertThat(sequenceUpdated.getDerniereValeur()).isGreaterThanOrEqualTo(1);
+            assertThat(ecritureSaved.getLibelle()).isEqualTo("Insert_Ecriture_IT");
+            assertThat(ecritureSaved.getJournal().getLibelle()).isEqualTo("Achat");
+        }
 
-        comptabiliteManager.addReference(ecritureComptable);
-        SequenceEcritureComptable sequenceUpdated = comptabiliteManager.getSequenceEcritureComptableByYearAndJournalCode("AC",2021);
-        assertThat(sequenceUpdated.getDerniereValeur()).isEqualTo(2);
+        @Order(2)
+        @Tag("update_Ecriture_And_Sequence")
+        @DisplayName("Should update an EcritureComptable ")
+        @Test
+        public void update_Ecriture_And_Sequence() throws FunctionalException, NotFoundException {
+            List<EcritureComptable> ecritureComptables = comptabiliteManager.getListEcritureComptable();
+            EcritureComptable ecritureSaved = ecritureComptables.get(ecritureComptables.size() - 1);
+            ecritureSaved.setLibelle("Update_Ecriture_IT");
+            ecritureSaved.setJournal(new JournalComptable("BQ", "Banque"));
+            comptabiliteManager.addReference(ecritureSaved);
+            comptabiliteManager.updateEcritureComptable(ecritureSaved);
+            List<EcritureComptable> ecritureComptables2 = comptabiliteManager.getListEcritureComptable();
+            EcritureComptable ecritureUpdated = ecritureComptables.get(ecritureComptables2.size() - 1);
+            SequenceEcritureComptable sequenceUpdated = comptabiliteManager
+                    .getSequenceEcritureComptableByYearAndJournalCode("BQ", 2021);
+            assertThat(sequenceUpdated.getDerniereValeur()).isGreaterThanOrEqualTo(1);
+            assertThat(ecritureUpdated.getLibelle()).isEqualTo("Update_Ecriture_IT");
+            assertThat(ecritureUpdated.getJournal().getLibelle()).isEqualTo("Banque");
+
+        }
+
+        @Order(3)
+        @Tag("delete_Ecriture")
+        @DisplayName("Should delete an EcritureComptable")
+        @Test
+        public void delete_Ecriture() {
+            List<EcritureComptable> ecritureComptable1 = comptabiliteManager.getListEcritureComptable();
+            EcritureComptable ecritureToDelete = ecritureComptable1.get(ecritureComptable1.size() - 1);
+            comptabiliteManager.deleteEcritureComptable(ecritureToDelete.getId());
+            List<EcritureComptable> ecritureComptables2 = comptabiliteManager.getListEcritureComptable();
+            EcritureComptable lastEcriture = ecritureComptables2.get(ecritureComptables2.size() - 1);
+            assertThat(ecritureComptables2.size()).isEqualTo(ecritureComptable1.size() - 1);
+            assertThat(lastEcriture.getId()).isNotEqualTo(ecritureToDelete.getId());
+        }
     }
 
 }
+

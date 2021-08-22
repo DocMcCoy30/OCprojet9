@@ -1,6 +1,7 @@
 package com.dummy.myerp.model.bean.comptabilite;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class EcritureComptableTest {
 
-    static Logger logger = getLogger(EcritureComptableTest.class);
+    Logger logger = LogManager.getLogger(EcritureComptableTest.class);
 
     /* Méthodes à tester :
     public BigDecimal getTotalDebit();

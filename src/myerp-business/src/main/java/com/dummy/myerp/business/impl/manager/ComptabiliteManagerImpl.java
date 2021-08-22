@@ -64,12 +64,6 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
     public synchronized void addReference(EcritureComptable pEcritureComptable) throws FunctionalException {
         // TODO à implémenter : DONE
         //IMPLEMENTED : addReferenceMethod
-//        try {
-//            this.checkEcritureComptable(pEcritureComptable);
-//        } catch (FunctionalException e) {
-//            e.printStackTrace();
-//            logger.info(e.getMessage());
-//        }
         SequenceEcritureComptable sequence;
         int derniereValeur = 0;
         //1- Récupérer la date de l'EC (année)
