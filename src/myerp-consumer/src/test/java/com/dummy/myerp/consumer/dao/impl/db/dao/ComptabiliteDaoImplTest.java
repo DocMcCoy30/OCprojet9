@@ -209,22 +209,65 @@ public class ComptabiliteDaoImplTest {
                 "EcritureComptable non trouvée : reference=AC-2019/00001");
     }
 
+
+
     @Test
     @Tag("deleteEcritureComptable")
     @DisplayName("Should call the deleteEcritureComptable method")
     public void deleteEcritureComptable() {
-        doNothing().when(comptabiliteDao).deleteEcritureComptable(anyInt());
-        comptabiliteDao.deleteEcritureComptable(1);
+        doReturn(1).when(comptabiliteDao).deleteEcritureComptable(anyInt());
+        int actualResult = comptabiliteDao.deleteEcritureComptable(1);
         verify(comptabiliteDao, times(1)).deleteEcritureComptable(anyInt());
+        assertThat(actualResult).isEqualTo(1);
     }
 
     @Test
     @Tag("deleteListLigneEcritureComptable")
     @DisplayName("Should call the deleteEcritureComptable method")
-    public void deleteSequenceEcritureComptable() {
+    public void deleteListLigneEcritureComptable() {
         doNothing().when(comptabiliteDao).deleteListLigneEcritureComptable(anyInt());
         comptabiliteDao.deleteListLigneEcritureComptable(1);
-        verify(comptabiliteDao, times(1)).deleteListLigneEcritureComptable(anyInt());
+        verify(comptabiliteDao, times(1))
+                .deleteListLigneEcritureComptable(anyInt());
+    }
+
+    @Test
+    @Tag("insertEcritureComptable")
+    @DisplayName("Should call the insertEcritureComptable method")
+    public void insertEcritureComptable() {
+        EcritureComptable ecritureComptableStub = getEcritureComptableStub();
+        doReturn(ecritureComptableStub.getId()).when(comptabiliteDao)
+                .insertEcritureComptable(any(EcritureComptable.class));
+        int actualResult = comptabiliteDao.insertEcritureComptable(ecritureComptableStub);
+        verify(comptabiliteDao, times(1))
+                .insertEcritureComptable(any(EcritureComptable.class));
+        assertThat(actualResult).isEqualTo(ecritureComptableStub.getId());
+    }
+
+    @Test
+    @Tag("insertSequenceEcritureComptable")
+    @DisplayName("Should call the insertSequenceEcritureComptable method")
+    public void insertSequenceEcritureComptable() {
+        SequenceEcritureComptable sequenceStub = getListeSequenceEcritureComptableStub().get(0);
+        doReturn(sequenceStub.getDerniereValeur()).when(comptabiliteDao)
+                .insertSequenceEcritureComptable(any(SequenceEcritureComptable.class));
+        int actualResult = comptabiliteDao.insertSequenceEcritureComptable(sequenceStub);
+        verify(comptabiliteDao, times(1))
+                .insertSequenceEcritureComptable(any(SequenceEcritureComptable.class));
+        assertThat(actualResult).isEqualTo(sequenceStub.getDerniereValeur());
+    }
+
+    @Test
+    @Tag("insertSequenceEcritureComptable")
+    @DisplayName("Should call the insertSequenceEcritureComptable method")
+    public void updateSequenceEcritureComptable() {
+        SequenceEcritureComptable sequenceStub = getListeSequenceEcritureComptableStub().get(0);
+        doReturn(sequenceStub.getDerniereValeur()).when(comptabiliteDao)
+                .updateSequenceEcritureComptable(any(SequenceEcritureComptable.class));
+        int actualResult = comptabiliteDao.updateSequenceEcritureComptable(sequenceStub);
+        verify(comptabiliteDao, times(1))
+                .updateSequenceEcritureComptable(sequenceStub);
+        assertThat(actualResult).isEqualTo(sequenceStub.getDerniereValeur());
     }
 
 

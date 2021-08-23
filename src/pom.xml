@@ -98,25 +98,12 @@
             <id>test-consumer</id>
         </profile>
 
-        <profile>
-            <id>sonar</id>
-            <properties>
-                <sonar.organization>docmccoy30</sonar.organization>
-                <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.sonarsource.scanner.maven</groupId>
-                        <artifactId>sonar-maven-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+        <!-- =============================================================== -->
+
+
+
+        <!-- =============================================================== -->
+
     </profiles>
 
 

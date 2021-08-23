@@ -299,14 +299,15 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
         return sequenceEcritureComptable;
     }
 
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public void updateSequenceEcritureComptable(SequenceEcritureComptable sequence) {
+    public void insertSequenceEcritureComptable(SequenceEcritureComptable sequence) {
         TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
         try {
-            getDaoProxy().getComptabiliteDao().updateSequenceEcritureComptable(sequence);
+            getDaoProxy().getComptabiliteDao().insertSequenceEcritureComptable(sequence);
             getTransactionManager().commitMyERP(vTS);
             vTS = null;
         } finally {
@@ -318,10 +319,10 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
      * {@inheritDoc}
      */
     @Override
-    public void insertSequenceEcritureComptable(SequenceEcritureComptable sequence) {
+    public void updateSequenceEcritureComptable(SequenceEcritureComptable sequence) {
         TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
         try {
-            getDaoProxy().getComptabiliteDao().insertSequenceEcritureComptable(sequence);
+            getDaoProxy().getComptabiliteDao().updateSequenceEcritureComptable(sequence);
             getTransactionManager().commitMyERP(vTS);
             vTS = null;
         } finally {

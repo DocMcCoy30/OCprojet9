@@ -68,22 +68,25 @@ public interface ComptabiliteDao {
      * Insert une nouvelle écriture comptable.
      *
      * @param pEcritureComptable -
+     * @return an int
      */
-    void insertEcritureComptable(EcritureComptable pEcritureComptable);
+    int insertEcritureComptable(EcritureComptable pEcritureComptable);
 
     /**
      * Met à jour l'écriture comptable.
      *
      * @param pEcritureComptable -
+     * @return an int
      */
-    void updateEcritureComptable(EcritureComptable pEcritureComptable);
+    int updateEcritureComptable(EcritureComptable pEcritureComptable);
 
     /**
      * Supprime l'écriture comptable d'id {@code pId}.
      *
      * @param pId l'id de l'écriture
+     * @return an int
      */
-    void deleteEcritureComptable(Integer pId);
+    int deleteEcritureComptable(Integer pId);
 
 
     // ==================== SequenceEcritureComptable ====================
@@ -104,7 +107,18 @@ public interface ComptabiliteDao {
      */
     SequenceEcritureComptable getSequenceEcritureComptableByYearAndJournalCode(String code, int year);
 
-    void updateSequenceEcritureComptable(SequenceEcritureComptable sequence);
+    /**
+     * Enregistre une sequence ecriture comptable
+     * @param sequence : la SequenceEcritureComptable à créer
+     * @return an int
+     */
+    int insertSequenceEcritureComptable(SequenceEcritureComptable sequence);
 
-    void insertSequenceEcritureComptable(SequenceEcritureComptable sequence);
+    /**
+     * Met à jour une sequence ecriture comptable
+     * @param sequence la SequenceEcritureComptable à mettre à jour
+     * @return an int
+     */
+    int updateSequenceEcritureComptable(SequenceEcritureComptable sequence);
+
 }
